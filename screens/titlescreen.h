@@ -13,8 +13,9 @@
 #include "../objects/texture.h"
 #include "../objects/button.h"
 
-bool screens_TitleScreen_loadtextures(Window *window, Texture *buttonTexture, Texture *textTexture, TTF_Font **font);
-void screens_TitleScreen_close(Button *button1, Button *button2, Texture *buttonTexture, Texture *textTexture, TTF_Font *font);
-int screens_TitleScreen(Window *window);
+//screen include
+#include "screens.h"
+
+Screen screens_TitleScreen(Window *window);
 
 #endif

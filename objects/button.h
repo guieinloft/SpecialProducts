@@ -11,7 +11,7 @@ typedef struct button_t Button;
 Button *button_create(int x, int y, int size, Texture *texture);
 void button_free(Button *self);
 
-bool button_change_text(Button *self, SDL_Renderer *renderer, TTF_Font *font, char *text, int text_size, SDL_Color text_color);
+bool button_change_text(Button *self, SDL_Renderer *renderer, TTF_Font *font, char *text, SDL_Color text_color, bool centered);
 
 void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley);
 

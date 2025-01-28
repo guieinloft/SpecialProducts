@@ -14,14 +14,21 @@
 #include "objects/button.h"
 
 //screens
+#include "screens/screens.h"
 #include "screens/titlescreen.h"
+#include "screens/testscreen1.h"
 
 int main() {
     //init sdl window
     Window *window = window_init();
+    printf("AAAAA\n");
 
     //call title screen
-    printf("RETORNO: %d\n", screens_TitleScreen(window));
+    Screen current = SCREEN_TITLESCREEN;
+    do {
+        current = screens_redirect(current, window);
+        printf("next screen: %d\n", current);
+    } while (current != SCREEN_ERROR && current != SCREEN_QUIT);
 
     //close everything
     window_close(window);

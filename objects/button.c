@@ -24,6 +24,7 @@ struct button_t {
 
     bool over;
     bool selected;
+    bool centered;
 };
 
 Button *button_create(int x, int y, int size, Texture *tex_button) {
@@ -69,8 +70,9 @@ void button_free(Button *self) {
     free(self);
 }
 
-bool button_change_text(Button *self, SDL_Renderer *renderer, TTF_Font *font, char *text, int text_size, SDL_Color text_color) {
+bool button_change_text(Button *self, SDL_Renderer *renderer, TTF_Font *font, char *text, SDL_Color text_color, bool centered) {
     if(!texture_load_from_text(self->tex_text, renderer, font, text, text_color)) return false;
+    self->centered = centered;
     return true;
 }
 
@@ -97,10 +99,12 @@ void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley
 
 void button_render(Button *self, SDL_Renderer *renderer) {
     texture_render(self->tex_button, renderer, self->x, self->y, &(self->clips[self->current]));
-    int text_w = texture_getw(self->tex_text);
-    int text_h = texture_geth(self->tex_text);
+    int text_w, text_h;
+    if (self->centered) text_w = (self->width - texture_getw(self->tex_text)) / 2;
+    else text_w = 8;
+    text_h = (BUTTON_HEIGHT - texture_geth(self->tex_text)) / 2;
 
-    texture_render(self->tex_text, renderer, (self->x + self->width - text_w) / 16 * 8, self->y + 8, NULL);
+    texture_render(self->tex_text, renderer, self->x + text_w, self->y + text_h, NULL);
 }
 
 bool button_isover(Button *self) {

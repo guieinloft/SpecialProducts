@@ -13,5 +13,7 @@ void window_close(Window *self);
 void window_render(Window *self);
 
 SDL_Renderer *window_get_renderer(Window *self);
+int window_get_scalex(Window *self);
+int window_get_scaley(Window *self);
 
 #endif

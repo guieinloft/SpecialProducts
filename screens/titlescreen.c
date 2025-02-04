@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 //sdl includes
 #include <SDL2/SDL.h>
@@ -12,42 +13,37 @@
 #include "../objects/window.h"
 #include "../objects/texture.h"
 #include "../objects/button.h"
+#include "../objects/colors.h"
 
 //screen include
 #include "screens.h"
 
 struct media_t {
-    Texture *tex_button;
-    Texture *tex_text;
+    Texture *tex_prompt;
+    Texture *tex_copyright;
     Texture *tex_bg;
     Texture *tex_title;
 
-    TTF_Font *font_normal;
-    TTF_Font *font_light;
+    TTF_Font *font;
 
     Mix_Music *music;
 };
 
-bool screens_TitleScreen_loadmedia(Window *window, struct media_t *media) {
-    media->tex_button = texture_create();
-    if (media->tex_button == NULL) return false;
-    media->tex_text = texture_create();
-    if (media->tex_text == NULL) return false;
+bool screens_titlescreen_loadmedia(Window *window, struct media_t *media) {
+    media->tex_prompt = texture_create();
+    if (media->tex_prompt == NULL) return false;
+    media->tex_copyright = texture_create();
+    if (media->tex_copyright == NULL) return false;
     media->tex_bg = texture_create();
     if (media->tex_bg == NULL) return false;
     media->tex_title = texture_create();
     if (media->tex_title == NULL) return false;
 
-    if(!texture_load_from_file(media->tex_button, window_get_renderer(window), "img/ButtonTexture256.png")) return false;
+    media->font = TTF_OpenFont("fonts/PressStart2P-Regular.ttf", 8);
+    if (media->font == NULL) return false;
     
-    media->font_normal = TTF_OpenFont("fonts/PlayerSansMono8x13-Classic.ttf", 8);
-    if (media->font_normal == NULL) return false;
-    
-    media->font_light = TTF_OpenFont("fonts/PlayerSansMono8x13-Light.ttf", 8);
-    if (media->font_light == NULL) return false;
-    
-    SDL_Color textColor = {0, 0, 0, 255};
-    if(!texture_load_from_text(media->tex_text, window_get_renderer(window), media->font_light, "COPYRIGHT Guilherme Einloft 2025", textColor)) return false;
+    if(!texture_load_from_text(media->tex_prompt, window_get_renderer(window), media->font, "PRESSIONE O BOTÃO ESQUERDO DO MOUSE", COLOR_TEXT_DEFAULT)) return false;
+    if(!texture_load_from_text(media->tex_copyright, window_get_renderer(window), media->font, "© 2025, Guilherme Einloft", COLOR_TEXT_DEFAULT)) return false;
 
     if(!texture_load_from_file(media->tex_bg, window_get_renderer(window), "img/BgTexture.png")) return false;
     
@@ -59,78 +55,58 @@ bool screens_TitleScreen_loadmedia(Window *window, struct media_t *media) {
     return true;
 }
 
-void screens_TitleScreen_close(Button *button1, Button *button2, struct media_t *media) {
-    button_free(button1);
-    button_free(button2);
-    texture_free(media->tex_button);
-    texture_free(media->tex_text);
+void screens_titlescreen_close(struct media_t *media) {
+    texture_free(media->tex_prompt);
+    texture_free(media->tex_copyright);
     texture_free(media->tex_bg);
     texture_free(media->tex_title);
-    TTF_CloseFont(media->font_normal);
-    TTF_CloseFont(media->font_light);
+    TTF_CloseFont(media->font);
     Mix_FreeMusic(media->music);
 }
 
-Screen screens_TitleScreen(Window *window) {
+Screen screens_titlescreen(Window *window) {
     struct media_t *media = (struct media_t*)malloc(sizeof(struct media_t));
     if (media == NULL) {
         printf("Couldnt open media struct\n");
         return SCREEN_ERROR;
     }
-    if (!screens_TitleScreen_loadmedia(window, media)) {
+    if (!screens_titlescreen_loadmedia(window, media)) {
         printf("Couldnt open textures\n");
         return SCREEN_ERROR;
     }
     
-    Button *button1 = button_create(SCREEN_W / 2 - 128, 256, 256, media->tex_button);
-    Button *button2 = button_create(SCREEN_W / 2 - 128, 288, 256, media->tex_button);
-
-    if (button1 == NULL || button2 == NULL) {
-        printf("Couldnt make buttons\n");
-        return SCREEN_ERROR;
-    }
-    SDL_Color text_color = {0, 0, 0, 255};
-    if (!button_change_text(button1, window_get_renderer(window), media->font_normal, "INICIAR JOGO", text_color, true)) {
-        printf("Couldnt change button text\n");
-        return -1;
-    }
-    if (!button_change_text(button2, window_get_renderer(window), media->font_normal, "OPÇÕES", text_color, true)) {
-        printf("Couldnt change button text\n");
-        return SCREEN_ERROR;
-    }
-
     bool quit = false;
     Screen ret = SCREEN_QUIT;
 
     SDL_Event e;
+
+    int flicker = 0;
+    double size = 0.0;
 
     Mix_PlayMusic(media->music, -1);
 
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) quit = true;
-            button_handle_event(button1, e, 1.0, 1.0);
-            button_handle_event(button2, e, 1.0, 1.0);
+            else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                ret = SCREEN_MENU;
+                quit = true;
+            };
         }
 
         texture_render(media->tex_bg, window_get_renderer(window), 0, 0, NULL);
-        button_render(button1, window_get_renderer(window));
-        button_render(button2, window_get_renderer(window));
-        texture_render(media->tex_text, window_get_renderer(window), 8, SCREEN_H - 16, NULL);
-        texture_render(media->tex_title, window_get_renderer(window), SCREEN_W / 2 - 128, 0, NULL);
+        if (flicker < 30) {
+            texture_render(media->tex_prompt, window_get_renderer(window), (SCREEN_W - texture_getw(media->tex_prompt)) / 2, 256, NULL);
+        }
+        texture_render(media->tex_copyright, window_get_renderer(window), 8, SCREEN_H - 16, NULL);
+        texture_render_scaled(media->tex_title, window_get_renderer(window), SCREEN_W / 2 - 128 * sin(size), 128 - 128 * sin(size), NULL, sin(size), sin(size), 0.0, NULL);
         window_render(window);
 
-        if (button_isselected(button1)) {
-            ret = SCREEN_TESTSCREEN1;
-            quit = true;
-        }
-        if (button_isselected(button2)) {
-            ret = SCREEN_TESTSCREEN2;
-            quit = true;
-        }
+        size += 0.1 * (size < 1.6);
+        flicker = (flicker + 1) % 40;
     }
     
     Mix_HaltMusic();
-    screens_TitleScreen_close(button1, button2, media);
+    screens_titlescreen_close(media);
     return ret;
 }

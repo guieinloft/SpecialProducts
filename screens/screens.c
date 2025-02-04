@@ -2,17 +2,20 @@
 #include "../objects/window.h"
 #include "titlescreen.h"
 #include "testscreen1.h"
-#include "testscreen2.h"
+#include "menu.h"
+#include "quiz1.h"
 
 Screen screens_redirect(Screen screen, Window *window) {
     switch (screen) {
         case SCREEN_TITLESCREEN:
-        return screens_TitleScreen(window);
+        return screens_titlescreen(window);
         case SCREEN_TESTSCREEN1:
-        return screens_TestScreen1(window);
-        case SCREEN_TESTSCREEN2:
-        return screens_TestScreen2(window);
+        return screens_testscreen1(window);
+        case SCREEN_MENU:
+        return screens_menu(window);
+        case SCREEN_QUIZ1:
+        return screens_quiz1(window);
         default:
-        return screen;
+        return screens_testscreen1(window);
     }
 }

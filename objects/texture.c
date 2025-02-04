@@ -18,6 +18,7 @@ Texture *texture_create(void) {
     self->texture = NULL;
     self->w = 0;
     self->h = 0;
+    SDL_SetTextureBlendMode(self->texture, SDL_BLENDMODE_NONE);
     return self;
 }
 
@@ -75,14 +76,41 @@ void texture_clear(Texture *self) {
     if (self->texture != NULL) SDL_DestroyTexture(self->texture);
 }
 
+void texture_set_color_mod(Texture *self, SDL_Color color, SDL_BlendMode blend) {
+    SDL_SetTextureBlendMode(self->texture, blend);
+    SDL_SetTextureColorMod(self->texture, color.r, color.g, color.b);
+    SDL_SetTextureAlphaMod(self->texture, color.a);
+}
+
 void texture_render(Texture *self, SDL_Renderer *renderer, int x, int y, SDL_Rect *clip) {
-    if (self->texture == NULL) return;
+    if (self == NULL || self->texture == NULL) return;
     SDL_Rect rquad = {x, y, self->w, self->h};
     if (clip != NULL) {
         rquad.w = clip->w;
         rquad.h = clip->h;
     }
     SDL_RenderCopy(renderer, self->texture, clip, &rquad);
+}
+
+void texture_render_scaled(Texture *self, SDL_Renderer *renderer, int x, int y, SDL_Rect *clip, double scalex, double scaley, double angle, SDL_Point *center) {
+    if (self == NULL || self->texture == NULL) return;
+    SDL_Rect rquad = {x, y, self->w, self->h};
+    if (clip != NULL) {
+        rquad.w = clip->w;
+        rquad.h = clip->h;
+    }
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    if (scalex < 0) {
+        scalex *= -1.0;
+        flip |= SDL_FLIP_HORIZONTAL;
+    }
+    if (scaley < 0) {
+        scaley *= -1.0;
+        flip |= SDL_FLIP_VERTICAL;
+    }
+    rquad.w *= scalex;
+    rquad.h *= scaley;
+    SDL_RenderCopyEx(renderer, self->texture, clip, &rquad, angle, center, flip);
 }
 
 int texture_getw(Texture *self) {

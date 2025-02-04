@@ -1,5 +1,5 @@
-#ifndef SCREENS_TESTSCREEN1_H
-#define SCREENS_TESTSCREEN1_H
+#ifndef SCREENS_MENU_H
+#define SCREENS_MENU_H
 
 //libc includes
 #include <stdbool.h>
@@ -10,12 +10,10 @@
 
 //object includes
 #include "../objects/window.h"
-#include "../objects/texture.h"
-#include "../objects/button.h"
 
 //screen include
 #include "screens.h"
 
-Screen screens_testscreen1(Window *window);
+Screen screens_menu(Window *window);
 
 #endif

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 
 //SDL
 #include <SDL2/SDL.h>
@@ -19,9 +20,9 @@
 #include "screens/testscreen1.h"
 
 int main() {
+    srand(time(0));
     //init sdl window
     Window *window = window_init();
-    printf("AAAAA\n");
 
     //call title screen
     Screen current = SCREEN_TITLESCREEN;

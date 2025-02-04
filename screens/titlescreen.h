@@ -16,6 +16,6 @@
 //screen include
 #include "screens.h"
 
-Screen screens_TitleScreen(Window *window);
+Screen screens_titlescreen(Window *window);
 
 #endif

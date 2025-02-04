@@ -1,5 +1,5 @@
-#ifndef SCREENS_TESTSCREEN2_H
-#define SCREENS_TESTSCREEN2_H
+#ifndef SCREENS_QUIZ1_H
+#define SCREENS_QUIZ1_H
 
 //libc includes
 #include <stdbool.h>
@@ -16,6 +16,6 @@
 //screen include
 #include "screens.h"
 
-Screen screens_TestScreen2(Window *window);
+Screen screens_quiz1(Window *window);
 
 #endif

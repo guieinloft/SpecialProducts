@@ -11,6 +11,9 @@ struct window_t {
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *target;
+
+    int scalex;
+    int scaley;
 };
 
 Window *window_init(void) {
@@ -41,7 +44,12 @@ Window *window_init(void) {
     //init subsystems
     assert(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG);
     assert(TTF_Init() != -1);
-    assert(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) >= 0);
+    assert(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) >= 0);
+
+    //SDL_ShowCursor(SDL_DISABLE);
+
+    self->scalex = 1.0;
+    self->scaley = 1.0;
 
     return self;
 }
@@ -56,6 +64,8 @@ void window_close(Window *self) {
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
+    
+    //SDL_ShowCursor(SDL_ENABLE);
     
     //free self struct
     free(self);
@@ -77,4 +87,12 @@ void window_render(Window *self) {
 
 SDL_Renderer *window_get_renderer(Window *self) {
     return self->renderer;
+}
+
+int window_get_scalex(Window *self) {
+    return self->scalex;
+}
+
+int window_get_scaley(Window *self) {
+    return self->scaley;
 }

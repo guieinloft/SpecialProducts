@@ -16,7 +16,10 @@ bool texture_load_from_text(Texture *self, SDL_Renderer *renderer, TTF_Font *fon
 #endif
 void texture_clear(Texture *self);
 
+void texture_set_color_mod(Texture *self, SDL_Color color, SDL_BlendMode blend);
+
 void texture_render(Texture *self, SDL_Renderer *renderer, int x, int y, SDL_Rect *clip);
+void texture_render_scaled(Texture *self, SDL_Renderer *renderer, int x, int y, SDL_Rect *clip, double scalex, double scaley, double angle, SDL_Point *center);
 
 int texture_getw(Texture *self);
 int texture_geth(Texture *self);

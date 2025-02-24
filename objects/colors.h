@@ -41,6 +41,7 @@ extern const SDL_Color COLOR_LWHITET;
 
 extern const SDL_Color COLOR_TEXT_DEFAULT;
 extern const SDL_Color COLOR_TEXT_DEFAULT_LIGHT;
+extern const SDL_Color COLOR_TEXT_HIGHLIGHT;
 extern const SDL_Color COLOR_TEXT_TEXTBOX_EMPTY;
 extern const SDL_Color COLOR_TEXT_TEXTBOX_WRONG;
 extern const SDL_Color COLOR_TEXT_TEXTBOX_RIGHT;

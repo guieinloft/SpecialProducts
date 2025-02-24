@@ -1,5 +1,5 @@
-#ifndef SCREENS_MENU_H
-#define SCREENS_MENU_H
+#ifndef SCREENS_DEMO1_H
+#define SCREENS_DEMO1_H
 
 //libc includes
 #include <stdbool.h>
@@ -14,6 +14,6 @@
 //screen include
 #include "screens.h"
 
-Screen screens_menu(Game *game);
+Screen screens_demo1(Game *game);
 
 #endif

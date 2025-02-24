@@ -118,6 +118,7 @@ bool textbox_get_enter(Textbox *self) {
 }
 
 void textbox_set_enter(Textbox *self, bool enter) {
+    if (!self->typable) return;
     self->enter = enter;
     if (enter) self->render = true;
 }
@@ -133,4 +134,14 @@ void textbox_set_typable(Textbox *self, bool typable) {
 
 char *textbox_get_text(Textbox *self) {
     return self->text;
+}
+
+void textbox_set_text(Textbox *self, char *text) {
+    self->typable = false;
+    self->text_size = 30;
+    memcpy(self->text, text, 31);
+}
+
+bool textbox_isempty(Textbox *self) {
+    return (self->text_size == 0);
 }

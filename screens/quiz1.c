@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <string.h>
+#include <stdint.h>
 
 //sdl includes
 #include <SDL2/SDL.h>
@@ -11,12 +12,13 @@
 #include <SDL2/SDL_mixer.h>
 
 //object includes
-#include "../objects/window.h"
+#include "../objects/game.h"
 #include "../objects/texture.h"
 #include "../objects/button.h"
 #include "../objects/textbox.h"
 #include "../objects/colors.h"
 #include "../objects/question.h"
+#include "../objects/timer.h"
 
 //screen include
 #include "screens.h"
@@ -25,6 +27,10 @@ struct media_t {
     Texture *tex_button;
     Texture *tex_text;
     Texture *tex_bg;
+    Texture *tex_name;
+    Texture *tex_points;
+    Texture *tex_time;
+    Texture *tex_questions[12];
     
     SDL_Rect clip_bg;
 
@@ -33,31 +39,54 @@ struct media_t {
     Mix_Music *music;
 };
 
-// funcoes auxiliares
-Question *question_1_7_create(bool inverted);
-Question *question_2_8_create(bool inverted);
-Question *question_3_9_create(bool inverted);
-Question *question_4_10_create(bool inverted);
-Question *question_5_11_create(bool inverted);
-Question *question_6_12_create(bool inverted);
-Question *question_n_create(int n);
+struct objects_t {
+    Question *questions[12];
+    Textbox *textboxes[12];
+    Button *bt_enter[12];
+    Button *bt_complete[12];
+    Timer *timer;
+};
 
-bool screens_quiz1_loadmedia(Window *window, struct media_t *media) {
+struct variables_t {
+    bool next;
+    bool correct[12];
+    bool correct_all;
+    bool autocomplete;
+    bool rerender_points;
+    char str_points[5];
+    char str_time[10];
+    int old_points;
+    int current_points;
+    int remaining_time;
+    int question_x[12];
+    int question_y[12];
+    Screen ret;
+    SDL_Event e;
+    int transition;
+};
+
+bool screens_quiz1_loadmedia(Game *game, struct media_t *media, struct variables_t *var) {
     media->tex_button = texture_create();
     if (media->tex_button == NULL) return false;
     media->tex_bg = texture_create();
     if (media->tex_bg == NULL) return false;
     media->tex_text = texture_create();
     if (media->tex_text == NULL) return false;
+    media->tex_name = texture_create();
+    if (media->tex_name == NULL) return false;
+    media->tex_points = texture_create();
+    if (media->tex_points == NULL) return false;
+    media->tex_time = texture_create();
+    if (media->tex_time == NULL) return false;
 
-    if(!texture_load_from_file(media->tex_button, window_get_renderer(window), "img/ButtonTexture.png")) return false;
+    if(!texture_load_from_file(media->tex_button, game_get_renderer(game), "img/ButtonTexture.png")) return false;
     
     media->font = TTF_OpenFont("fonts/PressStart2P-Regular.ttf", 8);
     if (media->font == NULL) return false;
     
-    if(!texture_load_from_text(media->tex_text, window_get_renderer(window), media->font, "QUESTÕES", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text, game_get_renderer(game), media->font, "QUESTÕES", COLOR_TEXT_DEFAULT_LIGHT)) return false;
 
-    if(!texture_load_from_file(media->tex_bg, window_get_renderer(window), "img/BgTexture.png")) return false;
+    if(!texture_load_from_file(media->tex_bg, game_get_renderer(game), "img/BgTexture.png")) return false;
 
     media->clip_bg.x = 0;
     media->clip_bg.y = 360;
@@ -65,232 +94,264 @@ bool screens_quiz1_loadmedia(Window *window, struct media_t *media) {
     media->clip_bg.h = SCREEN_H;
 
     texture_set_color_mod(media->tex_bg, COLOR_LBLUE, SDL_BLENDMODE_BLEND);
+
+    for (int i = 0; i < 12; i++) {
+        media->tex_questions[i] = texture_create();
+        if (media->tex_questions[i] == NULL) return false;
+    }
     
     media->music = Mix_LoadMUS("snd/dong.wav");
     if (media->music == NULL) return false;
 
+    //NAME AND POINTS
+    if(!texture_load_from_text(media->tex_name, game_get_renderer(game), media->font, game_get_name(game), COLOR_TEXT_DEFAULT_LIGHT)) return false;
+
+    sprintf(var->str_points, "%04d", var->old_points);
+    if(!texture_load_from_text(media->tex_points, game_get_renderer(game), media->font, var->str_points, COLOR_TEXT_DEFAULT_LIGHT)) return false;
+
     return true;
 }
 
-void screens_quiz1_close(QuestionContainer questions[12], struct media_t *media) {
+bool screens_quiz1_loadobjects(Game *game, struct objects_t *objects, struct media_t *media, struct variables_t *var) {
+    //create question containers
     for (int i = 0; i < 12; i++) {
-        question_free(questions[i].question);
-        texture_free(questions[i].texture);
-        textbox_free(questions[i].textbox);
+        objects->questions[i] = question_n_create(i);
+        if (objects->questions[i] == NULL) return false;
+        
+        texture_load_from_text(media->tex_questions[i], game_get_renderer(game), media->font, question_get_q_text(objects->questions[i]), COLOR_TEXT_DEFAULT_LIGHT);
+
+        objects->textboxes[i] = textbox_create(var->question_x[i], var->question_y[i]+8, media->tex_button);
+        if (objects->textboxes[i] == NULL) return false;
+
+        objects->bt_enter[i] = button_create(media->tex_button);
+        if (objects->bt_enter[i] == NULL) return false;
+        button_change_position(objects->bt_enter[i], var->question_x[i]+256, var->question_y[i]+8);
+        
+        objects->bt_complete[i] = button_create(media->tex_button);
+        if (objects->bt_complete[i] == NULL) return false;
+        button_change_position(objects->bt_complete[i], var->question_x[i]+280, var->question_y[i]+8);
     }
+
+    //create timer
+    objects->timer = timer_create();
+    if (objects->timer == NULL) return false;
+    return true;
+}
+
+void screens_quiz1_loadvariables(Game *game, struct variables_t *var) {
+    var->next = false;
+    for (int i = 0; i < 12; i++) {
+        var->correct[i] = false;
+        var->question_x[i] = 8 + (i > 5) * SCREEN_W / 2;
+        var->question_y[i] = 64 + (i % 6) * 40;
+    }
+    var->correct_all = false;
+    var->autocomplete = false;
+    var->rerender_points = false;
+    var->ret = SCREEN_NEXT;
+    var->old_points = game_get_points(game, POINTS_ALL & !POINTS_1);
+    var->current_points = 0;
+    var->remaining_time = TICKS_TOTAL;
+    var->transition = 15;
+}
+
+Screen screens_quiz1_close(struct media_t *media, struct objects_t *objects, struct variables_t *var) {
+    for (int i = 0; i < 12; i++) {
+        question_free(objects->questions[i]);
+        texture_free(media->tex_questions[i]);
+        textbox_free(objects->textboxes[i]);
+        button_free(objects->bt_enter[i]);
+        button_free(objects->bt_complete[i]);
+    }
+    timer_free(objects->timer);
     texture_free(media->tex_button);
     texture_free(media->tex_text);
     texture_free(media->tex_bg);
+    texture_free(media->tex_time);
+    texture_free(media->tex_name);
+    texture_free(media->tex_points);
     TTF_CloseFont(media->font);
     Mix_FreeMusic(media->music);
+    free(media);
+    free(objects);
+    Screen ret = var->ret;
+    free(var);
+    return ret;
 }
 
-Screen screens_quiz1(Window *window) {
-    struct media_t *media = (struct media_t*)malloc(sizeof(struct media_t));
-    if (media == NULL) {
-        printf("Couldnt open media struct\n");
-        return SCREEN_ERROR;
-    }
-    if (!screens_quiz1_loadmedia(window, media)) {
-        printf("Couldnt open textures\n");
-        return SCREEN_ERROR;
-    }
-
-    QuestionContainer questions[12];
-
-    for (int i = 0; i < 12; i++) {
-        questions[i].x = 8 + (i > 5) * 320;
-        questions[i].y = 32 + (i % 6) * 40;
-        questions[i].correct = false;
-
-        questions[i].question = question_n_create(i);
-        
-        questions[i].texture = texture_create();
-        texture_load_from_text(questions[i].texture, window_get_renderer(window), media->font, question_get_q_text(questions[i].question), COLOR_TEXT_DEFAULT_LIGHT);
-
-        questions[i].textbox = textbox_create(questions[i].x, questions[i].y+8, media->tex_button);
-    }
-    
-    bool quit = false;
-    int ret = SCREEN_QUIT;
-
-    SDL_Event e;
-
-    Mix_PlayMusic(media->music, -1);
-
-    for (int i = 0; i < 12; i++) {
-        
-    }
-
-    while (!quit) {
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) quit = true;
+void screens_quiz1_quiz(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
+    timer_start(objects->timer);
+    while (!var->next) {
+        while (SDL_PollEvent(&var->e) != 0) {
+            if (var->e.type == SDL_QUIT) {
+                var->next = true;
+                var->ret = SCREEN_QUIT;
+                var->transition = 0;
+            }
             for (int i = 0; i < 12; i++) {
-                textbox_handle_event(questions[i].textbox, e, window_get_scalex(window), window_get_scaley(window));
+                textbox_handle_event(objects->textboxes[i], var->e, game_get_scalex(game), game_get_scaley(game));
+                button_handle_event(objects->bt_enter[i], var->e, game_get_scalex(game), game_get_scaley(game));
+                button_handle_event(objects->bt_complete[i], var->e, game_get_scalex(game), game_get_scaley(game));
             }
         }
 
         //check if questions are right
-        bool correct = true;
+        var->correct_all = true;
+        var->rerender_points = false;
         for (int i = 0; i < 12; i++) {
-            if (textbox_get_enter(questions[i].textbox)) {
-                questions[i].correct = question_compare(questions[i].question, textbox_get_text(questions[i].textbox));
-                textbox_set_typable(questions[i].textbox, !questions[i].correct);
+            //check if enter button pressed
+            if (button_ispressed(objects->bt_enter[i])) {
+                textbox_set_enter(objects->textboxes[i], true);
             }
-            correct &= questions[i].correct;
-        } 
-        if (correct) {
-            quit = true;
-            ret = SCREEN_MENU;
+            if (textbox_get_enter(objects->textboxes[i])) {
+                //check if answer is correct
+                var->correct[i] = question_compare(objects->questions[i], textbox_get_text(objects->textboxes[i]));
+
+                //if answer is correct, add points to point counter
+                var->current_points += question_get_points(objects->questions[i]) * var->correct[i];
+                var->rerender_points |= var->correct[i];
+                textbox_set_typable(objects->textboxes[i], !var->correct[i]);
+            }
+            if (button_ispressed(objects->bt_complete[i])) {
+                var->correct[i] = true;
+                textbox_set_typable(objects->textboxes[i], !var->correct[i]);
+                textbox_set_text(objects->textboxes[i], question_get_a_text(objects->questions[i]));
+                var->autocomplete = true;
+            }
+
+            var->correct_all &= var->correct[i];
+        }
+        if (var->correct_all) {
+            var->next = true;
+        }
+        if (var->rerender_points) {
+            sprintf(var->str_points, "%04d", var->old_points + var->current_points);
+            texture_load_from_text(media->tex_points, game_get_renderer(game), media->font, var->str_points, COLOR_TEXT_DEFAULT_LIGHT);
+        }
+
+        //calculate and render time
+        var->remaining_time = TICKS_TOTAL - (int)timer_get_ticks(objects->timer);
+        sprintf(var->str_time, "%02d:%02d:%02d", var->remaining_time/60000, (var->remaining_time % 60000) / 1000, (var->remaining_time % 1000) / 10);
+        texture_load_from_text(media->tex_time, game_get_renderer(game), media->font, var->str_time, COLOR_TEXT_DEFAULT_LIGHT);
+        
+        if (var->remaining_time < 0) {
+            var->next = true;
         }
     
-        texture_render(media->tex_bg, window_get_renderer(window), 0, 0, &media->clip_bg);
-        texture_render(media->tex_text, window_get_renderer(window), (SCREEN_W - texture_getw(media->tex_text)) / 2, 16, NULL);
+        texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
+        texture_render(media->tex_text, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_text)) / 2, 32, NULL);
+        texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
+        texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
+        texture_render(media->tex_time, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_time)) / 2, 8, NULL);
 
         for (int i = 0; i < 12; i++) {
-            texture_render(questions[i].texture, window_get_renderer(window), questions[i].x, questions[i].y, NULL);
-            textbox_render(questions[i].textbox, window_get_renderer(window), media->font);
+            texture_render(media->tex_questions[i], game_get_renderer(game), var->question_x[i], var->question_y[i], NULL);
+            textbox_render(objects->textboxes[i], game_get_renderer(game), media->font);
+            button_render(objects->bt_enter[i], game_get_renderer(game));
+            button_render(objects->bt_complete[i], game_get_renderer(game));
         }
 
-        window_render(window);
+        game_render(game, var->transition);
+
+        var->transition += 16 * (var->transition < 255);
     }
+    
+    timer_stop(objects->timer);
+}
+
+void screens_quiz1_results(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
+    int timer = 120;
+
+    if (var->correct_all) {
+        texture_load_from_text(media->tex_text, game_get_renderer(game), media->font, "PARABÉNS!", COLOR_LGREEN);
+    }
+    else {
+        texture_load_from_text(media->tex_text, game_get_renderer(game), media->font, "QUE PENA!", COLOR_LRED);
+    }
+    while (!var->next || var->transition > 0) {
+        if (timer < 0) {
+            if (var->remaining_time > 0 && !var->autocomplete) {
+                var->remaining_time -= 10000;
+                var->remaining_time *= (var->remaining_time > 0);
+                var->current_points++;
+            }
+            else {
+                var->next = true;
+                var->transition -= 16;
+                var->transition *= (var->transition > 0);
+            }
+        }
+        
+        //if next
+        while (SDL_PollEvent(&var->e) != 0) {
+            if (var->e.type == SDL_QUIT) {
+                var->next = true;
+                var->ret = SCREEN_QUIT;
+                var->transition = 0;
+            }
+        }
+
+        //render
+        sprintf(var->str_points, "%04d", var->old_points + var->current_points);
+        texture_load_from_text(media->tex_points, game_get_renderer(game), media->font, var->str_points, COLOR_TEXT_DEFAULT_LIGHT);
+        
+        sprintf(var->str_time, "%02d:%02d:%02d", var->remaining_time/60000, (var->remaining_time % 60000) / 1000, (var->remaining_time % 1000) / 10);
+        texture_load_from_text(media->tex_time, game_get_renderer(game), media->font, var->str_time, COLOR_TEXT_DEFAULT_LIGHT);
+        
+        texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
+        texture_render(media->tex_text, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_text)) / 2, 32, NULL);
+        texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
+        texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
+        texture_render(media->tex_time, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_time)) / 2, 8, NULL);
+
+        for (int i = 0; i < 12; i++) {
+            texture_render(media->tex_questions[i], game_get_renderer(game), var->question_x[i], var->question_y[i], NULL);
+            textbox_render(objects->textboxes[i], game_get_renderer(game), media->font);
+            button_render(objects->bt_enter[i], game_get_renderer(game));
+            button_render(objects->bt_complete[i], game_get_renderer(game));
+        }
+
+        game_render(game, var->transition);
+        timer--;
+    }
+    var->ret = SCREEN_MENU;
+}
+
+Screen screens_quiz1(Game *game) {
+    struct media_t *media = (struct media_t*)malloc(sizeof(struct media_t));
+    struct objects_t *objects = (struct objects_t*)malloc(sizeof(struct objects_t));
+    struct variables_t *var = (struct variables_t*)malloc(sizeof(struct variables_t));
+    if (media == NULL || objects == NULL || var == NULL) {
+        printf("Couldnt open structs\n");
+        return SCREEN_ERROR;
+    }
+    screens_quiz1_loadvariables(game, var);
+    if (!screens_quiz1_loadmedia(game, media, var)) {
+        printf("Couldnt open textures\n");
+        return SCREEN_ERROR;
+    }
+    if (!screens_quiz1_loadobjects(game, objects, media, var)) {
+        printf("Couldnt open objects\n");
+        return SCREEN_ERROR;
+    }
+    
+    Mix_PlayMusic(media->music, -1);
+
+    screens_quiz1_quiz(game, media, objects, var);
 
     Mix_HaltMusic();
-    screens_quiz1_close(questions, media);
-    return ret;
-}
 
-//QUESTIONS {{{1
+    var->remaining_time *= (var->remaining_time > 0);
 
-Question *question_1_7_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = 0;
-    int c = 0;
-
-    char text1[TEXTBOX_TEXT_SIZE];
-    char text2[TEXTBOX_TEXT_SIZE];
-
-    sprintf(text1, "(x+%d)^2", a);
-    sprintf(text2, "x^2+%dx+%d", a*2, a*a);
-
-    if (inverted) {
-        return question_create(a, b, c, text2, text1);
+    //points tally
+    var->next = false;
+    if (var->ret == SCREEN_NEXT) {
+        screens_quiz1_results(game, media, objects, var);
     }
-    return question_create(a, b, c, text1, text2);
-}
-
-Question *question_2_8_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = 0;
-    int c = 0;
-
-    char text1[TEXTBOX_TEXT_SIZE];
-    char text2[TEXTBOX_TEXT_SIZE];
-
-    sprintf(text1, "(%d+x)^2", a);
-    sprintf(text2, "%d+%dx+x^2", a*a, a*2);
-
-    if (inverted) {
-        return question_create(a, b, c, text2, text1);
+    if (var->correct_all) {
+        game_set_points(game, POINTS_1, var->current_points);
     }
-    return question_create(a, b, c, text1, text2);
+
+    return screens_quiz1_close(media, objects, var);
 }
 
-Question *question_3_9_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = 0;
-    int c = 0;
-
-    char text1[TEXTBOX_TEXT_SIZE];
-    char text2[TEXTBOX_TEXT_SIZE];
-
-    sprintf(text1, "(y+%d)^2", a);
-    sprintf(text2, "y^2+%dy+%d", a*2, a*a);
-
-    if (inverted) {
-        return question_create(a, b, c, text2, text1);
-    }
-    return question_create(a, b, c, text1, text2);
-}
-
-Question *question_4_10_create(bool inverted) {
-    int a = (rand() % 4 + 1) * 2 + 1;
-    int b = 0;
-    int c = 0;
-
-    char text1[TEXTBOX_TEXT_SIZE];
-    char text2[TEXTBOX_TEXT_SIZE];
-
-    sprintf(text1, "(x/2+%d/2)^2", a);
-    sprintf(text2, "x^2/4+%dx+%d/4", a, a*a);
-
-    if (inverted) {
-        return question_create(a, b, c, text2, text1);
-    }
-    return question_create(a, b, c, text1, text2);
-}
-
-Question *question_5_11_create(bool inverted) {
-    int a = rand() % 3 + 2;
-    int b = rand() % 8 + 2;
-    int c = 0;
-
-    char text1[TEXTBOX_TEXT_SIZE];
-    char text2[TEXTBOX_TEXT_SIZE];
-
-    sprintf(text1, "(%dx+%d)^2", a, b);
-    sprintf(text2, "%dx^2+%dx+%d", a*a, 2*a*b, b*b);
-
-    if (inverted) {
-        return question_create(a, b, c, text2, text1);
-    }
-    return question_create(a, b, c, text1, text2);
-}
-
-Question *question_6_12_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = rand() % 8 + 2;
-    int c = 0;
-
-    char text1[TEXTBOX_TEXT_SIZE];
-    char text2[TEXTBOX_TEXT_SIZE];
-
-    sprintf(text1, "(%dx+%dy)^2", a, b);
-    sprintf(text2, "%dx^2+%dxy+%dy^2", a*a, 2*a*b, b*b);
-
-    if (inverted) {
-        return question_create(a, b, c, text2, text1);
-    }
-    return question_create(a, b, c, text1, text2);
-}
-
-Question *question_n_create(int n) {
-    switch(n) {
-        case 0:
-        return question_1_7_create(false);
-        case 1:
-        return question_2_8_create(false);
-        case 2:
-        return question_3_9_create(false);
-        case 3:
-        return question_4_10_create(false);
-        case 4:
-        return question_5_11_create(false);
-        case 5:
-        return question_6_12_create(false);
-        case 6:
-        return question_1_7_create(true);
-        case 7:
-        return question_2_8_create(true);
-        case 8:
-        return question_3_9_create(true);
-        case 9:
-        return question_4_10_create(true);
-        case 10:
-        return question_5_11_create(true);
-        case 11:
-        return question_6_12_create(true);
-        default:
-        return NULL;
-    }
-}

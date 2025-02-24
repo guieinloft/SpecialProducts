@@ -10,7 +10,7 @@
 #include <SDL2/SDL_mixer.h>
 
 //structs
-#include "objects/window.h"
+#include "objects/game.h"
 #include "objects/texture.h"
 #include "objects/button.h"
 
@@ -21,16 +21,16 @@
 
 int main() {
     srand(time(0));
-    //init sdl window
-    Window *window = window_init();
+    //init sdl game
+    Game *game = game_init();
 
     //call title screen
     Screen current = SCREEN_TITLESCREEN;
     do {
-        current = screens_redirect(current, window);
+        current = screens_redirect(current, game);
         printf("next screen: %d\n", current);
     } while (current != SCREEN_ERROR && current != SCREEN_QUIT);
 
     //close everything
-    window_close(window);
+    game_close(game);
 }

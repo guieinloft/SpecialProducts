@@ -53,6 +53,7 @@ Game *game_init(void) {
     
     SDL_SetRenderTarget(self->renderer, self->target);
     SDL_RenderClear(self->renderer);
+    SDL_SetRenderDrawBlendMode(self->renderer, SDL_BLENDMODE_BLEND);
 
     //init subsystems
     assert(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG);
@@ -144,4 +145,8 @@ void game_set_name(Game *self, char *name) {
 
 char *game_get_name(Game *self) {
     return self->name;
+}
+
+void game_reset_render_target(Game *self) {
+    SDL_SetRenderTarget(self->renderer, self->target);
 }

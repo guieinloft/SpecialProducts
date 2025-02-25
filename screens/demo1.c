@@ -31,6 +31,8 @@ struct media_t {
     Texture *tex_name;
     Texture *tex_points;
     Texture *tex_text[5][6];
+    Texture *tex_letters[2];
+    Texture *tex_canvas;
     
     SDL_Rect clip_bg;
 
@@ -65,12 +67,16 @@ bool screens_demo1_loadmedia(Game *game, struct media_t *media, struct variables
     if (media->tex_name == NULL) return false;
     media->tex_points = texture_create();
     if (media->tex_points == NULL) return false;
+    media->tex_canvas = texture_create();
+    if (media->tex_canvas == NULL) return false;
 
     if(!texture_load_from_file(media->tex_balloon, game_get_renderer(game), "img/BalloonTexture.png")) return false;
     if(!texture_load_from_file(media->tex_anim, game_get_renderer(game), "img/BalloonAnimTexture.png")) return false;
     
     media->font = TTF_OpenFont("fonts/PressStart2P-Regular.ttf", 8);
     if (media->font == NULL) return false;
+
+    if(!texture_create_blank(media->tex_canvas, game_get_renderer(game), 256, 256, SDL_TEXTUREACCESS_TARGET)) return false;
     
     if(!texture_load_from_file(media->tex_bg, game_get_renderer(game), "img/BgTexture.png")) return false;
 
@@ -132,6 +138,14 @@ bool screens_demo1_loadmedia(Game *game, struct media_t *media, struct variables
     if(!texture_load_from_text(media->tex_text[4][3], game_get_renderer(game), media->font, "a^2+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][4], game_get_renderer(game), media->font, "2ab", COLOR_TEXT_HIGHLIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][5], game_get_renderer(game), media->font, "+b^2", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    
+    media->tex_letters[0] = texture_create();
+    if (media->tex_text[0] == NULL) return false;
+    media->tex_letters[1] = texture_create();
+    if (media->tex_text[1] == NULL) return false;
+    
+    if(!texture_load_from_text(media->tex_letters[0], game_get_renderer(game), media->font, "a", COLOR_TEXT_DEFAULT)) return false;
+    if(!texture_load_from_text(media->tex_letters[1], game_get_renderer(game), media->font, "b", COLOR_TEXT_DEFAULT)) return false;
 
     return true;
 }
@@ -148,6 +162,7 @@ void screens_demo1_loadvariables(Game *game, struct variables_t *var) {
     var->old_points = game_get_points(game, POINTS_ALL & !POINTS_1);
     var->transition = 15;
     var->text_number = 0;
+    var->text_offset = 8;
 }
 
 Screen screens_demo1_close(struct media_t *media, struct objects_t *objects, struct variables_t *var) {
@@ -169,6 +184,72 @@ Screen screens_demo1_close(struct media_t *media, struct objects_t *objects, str
     Screen ret = var->ret;
     free(var);
     return ret;
+}
+
+void screens_demo1_drawbg(Game *game, struct media_t *media, struct variables_t *var) {
+    //set canvas as render target
+    texture_set_as_render_target(media->tex_canvas, game_get_renderer(game));
+    //draw rect
+    SDL_Rect bgrect = {0, 0, 256, 256};
+    SDL_Rect testrect = {32, 32, 192, 192};
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_LWHITE.r, COLOR_LWHITE.g, COLOR_LWHITE.b, COLOR_LWHITE.a);
+    SDL_RenderFillRect(game_get_renderer(game), &bgrect);
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DWHITE.r, COLOR_DWHITE.g, COLOR_DWHITE.b, COLOR_DWHITE.a);
+    SDL_RenderDrawRect(game_get_renderer(game), &bgrect);
+    SDL_RenderFillRect(game_get_renderer(game), &testrect);
+
+    //draw vertical lines
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DBLACK.r, COLOR_DBLACK.g, COLOR_DBLACK.b, COLOR_DBLACK.a);
+    SDL_RenderDrawLine(game_get_renderer(game), 28, 33, 28, 94);
+    SDL_RenderDrawLine(game_get_renderer(game), 24, 33, 28, 33);
+    SDL_RenderDrawLine(game_get_renderer(game), 24, 94, 28, 94);
+
+    SDL_RenderDrawLine(game_get_renderer(game), 28, 97, 28, 222);
+    SDL_RenderDrawLine(game_get_renderer(game), 24, 97, 28, 97);
+    SDL_RenderDrawLine(game_get_renderer(game), 24, 222, 28, 222);
+
+    //draw horizontal lines
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DBLACK.r, COLOR_DBLACK.g, COLOR_DBLACK.b, COLOR_DBLACK.a);
+    SDL_RenderDrawLine(game_get_renderer(game), 33, 227, 158, 227);
+    SDL_RenderDrawLine(game_get_renderer(game), 33, 227, 33, 231);
+    SDL_RenderDrawLine(game_get_renderer(game), 158, 227, 158, 231);
+
+    SDL_RenderDrawLine(game_get_renderer(game), 161, 227, 222, 227);
+    SDL_RenderDrawLine(game_get_renderer(game), 161, 227, 161, 231);
+    SDL_RenderDrawLine(game_get_renderer(game), 222, 227, 222, 231);
+
+    //draw letters
+    texture_render(media->tex_letters[1], game_get_renderer(game), 20, 60, NULL);
+    texture_render(media->tex_letters[0], game_get_renderer(game), 20, 156, NULL);
+    texture_render(media->tex_letters[0], game_get_renderer(game), 92, 228, NULL);
+    texture_render(media->tex_letters[1], game_get_renderer(game), 188, 228, NULL);
+
+    //reset render target (NEVER FORGET)
+    game_reset_render_target(game);
+}
+
+void screens_demo1_drawsquares(Game *game, struct media_t *media, struct variables_t *var) {
+    //set canvas as render target
+    texture_set_as_render_target(media->tex_canvas, game_get_renderer(game));
+    //draw rect aa
+    SDL_Rect rect_aa = {32, 96, 128, 128};
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DBLUE.r, COLOR_DBLUE.g, COLOR_DBLUE.b, (255 - 255 * var->text_offset / 8 * (var->text_number == 0)) * (var->text_number >= 0));
+    SDL_RenderFillRect(game_get_renderer(game), &rect_aa);
+    //draw rect ab
+    SDL_Rect rect_ab = {32, 32, 128, 64};
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DCYAN.r, COLOR_DCYAN.g, COLOR_DCYAN.b, (255 - 255 * var->text_offset / 8 * (var->text_number == 1)) * (var->text_number >= 1));
+    SDL_RenderFillRect(game_get_renderer(game), &rect_ab);
+    //draw rect ba
+    SDL_Rect rect_ba = {160, 96, 64, 128};
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DCYAN.r, COLOR_DCYAN.g, COLOR_DCYAN.b, (255 - 255 * var->text_offset / 8 * (var->text_number == 2)) * (var->text_number >= 2));
+    SDL_RenderFillRect(game_get_renderer(game), &rect_ba);
+    //draw rect bb
+    SDL_Rect rect_bb = {160, 32, 64, 64};
+    SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DGREEN.r, COLOR_DGREEN.g, COLOR_DGREEN.b, (255 - 255 * var->text_offset / 8 * (var->text_number == 3)) * (var->text_number >= 3));
+    SDL_RenderFillRect(game_get_renderer(game), &rect_bb);
+
+    //reset render target (NEVER FORGET)
+    game_reset_render_target(game);
 }
 
 void screens_demo1_intro(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
@@ -194,6 +275,12 @@ void screens_demo1_intro(Game *game, struct media_t *media, struct objects_t *ob
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
+        
+        //draw canvas
+        screens_demo1_drawbg(game, media, var);
+        screens_demo1_drawsquares(game, media, var);
+        texture_render(media->tex_canvas, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_canvas))/2, 32, NULL);
+
         balloon_render(objects->balloon, game_get_renderer(game));
 
         game_render(game, var->transition);
@@ -231,6 +318,12 @@ void screens_demo1_demo(Game *game, struct media_t *media, struct objects_t *obj
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
+        
+        //draw canvas
+        screens_demo1_drawbg(game, media, var);
+        screens_demo1_drawsquares(game, media, var);
+        texture_render(media->tex_canvas, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_canvas))/2, 32, NULL);
+
         for (int k = 0; k <= var->text_number; k++) {
             for (int i = 0; i < 6; i++) {
                 int x = 216;
@@ -244,7 +337,7 @@ void screens_demo1_demo(Game *game, struct media_t *media, struct objects_t *obj
 
         game_render(game, var->transition);
 
-        var->text_offset -= 2 * (var->text_offset > 0);
+        var->text_offset >>= 1;
     }
 }
 
@@ -270,6 +363,12 @@ void screens_demo1_end(Game *game, struct media_t *media, struct objects_t *obje
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
+        
+        //draw canvas
+        screens_demo1_drawbg(game, media, var);
+        screens_demo1_drawsquares(game, media, var);
+        texture_render(media->tex_canvas, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_canvas))/2, 32, NULL);
+
         balloon_render(objects->balloon, game_get_renderer(game));
 
         game_render(game, var->transition);

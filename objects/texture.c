@@ -69,7 +69,16 @@ bool texture_load_from_text(Texture *self, SDL_Renderer *renderer, TTF_Font *fon
         return false;
     }
     return true;
-    
+}
+
+bool texture_create_blank(Texture *self, SDL_Renderer *renderer, int w, int h, SDL_TextureAccess access) {
+    texture_clear(self);
+
+    self->texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, access, w, h);
+    if (self->texture == NULL) return false;
+    self->w = w;
+    self->h = h;
+    return self->texture != NULL;
 }
 
 void texture_clear(Texture *self) {
@@ -90,6 +99,12 @@ void texture_render(Texture *self, SDL_Renderer *renderer, int x, int y, SDL_Rec
         rquad.h = clip->h;
     }
     SDL_RenderCopy(renderer, self->texture, clip, &rquad);
+}
+
+bool texture_set_as_render_target(Texture *self, SDL_Renderer *renderer) {
+    if (self == NULL) return false;
+    SDL_SetRenderTarget(renderer, self->texture);
+    return true;
 }
 
 void texture_render_scaled(Texture *self, SDL_Renderer *renderer, int x, int y, SDL_Rect *clip, double scalex, double scaley, double angle, SDL_Point *center) {

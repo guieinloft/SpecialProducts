@@ -20,6 +20,7 @@ typedef struct game_t Game;
 Game *game_init(void);
 void game_close(Game *self);
 void game_render(Game *self, uint8_t alpha);
+void game_reset_render_target(Game *self);
 
 SDL_Renderer *game_get_renderer(Game *self);
 int game_get_scalex(Game *self);

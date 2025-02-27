@@ -75,6 +75,11 @@ bool textbox_handle_textinput(Textbox *self, SDL_Event e) {
             i++;
         }
         self->text[self->text_size] = '\0';
+        if (self->text_size > 1 && self->text[self->text_size - 1] == '2' && self->text[self->text_size - 2] == '^') {
+            char square[] = "²";
+            self->text[self->text_size - 1] = square[1];
+            self->text[self->text_size - 2] = square[0];
+        }
         return true;
     }
     return false;
@@ -144,4 +149,8 @@ void textbox_set_text(Textbox *self, char *text) {
 
 bool textbox_isempty(Textbox *self) {
     return (self->text_size == 0);
+}
+
+bool textbox_ispressed(Textbox *self) {
+    return button_ispressed(self->button);
 }

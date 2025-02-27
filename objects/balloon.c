@@ -110,7 +110,6 @@ bool balloon_read_text(Balloon *self, SDL_Renderer *renderer, TTF_Font *font) {
         return false;
     }
     self->num_anim %= 3;
-    printf("%d %d\n", self->num_lines, self->num_anim);
     for (int i = 0; i < self->num_lines; i++) {
         getline(&self->line_buf, &self->buf_size, self->file);
         self->line_buf[strcspn(self->line_buf, "\r\n")] = '\0';

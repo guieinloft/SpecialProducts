@@ -30,6 +30,9 @@ struct media_t {
     TTF_Font *font;
 
     Mix_Music *music;
+    Mix_Chunk *sfx_click;
+    Mix_Chunk *sfx_right;
+    Mix_Chunk *sfx_wrong;
 };
 
 struct objects_t {
@@ -73,8 +76,14 @@ bool screens_titlescreen_loadmedia(Game *game, struct media_t *media) {
     
     if(!texture_load_from_file(media->tex_button, game_get_renderer(game), "img/ButtonTexture.png")) return false;
 
-    media->music = Mix_LoadMUS("snd/dong.wav");
+    media->music = Mix_LoadMUS("snd/titleproducts.wav");
     if (media->music == NULL) return false;
+    media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
+    if (media->sfx_click == NULL) return false;
+    media->sfx_right = Mix_LoadWAV("snd/sfx_right.wav");
+    if (media->sfx_right == NULL) return false;
+    media->sfx_wrong = Mix_LoadWAV("snd/sfx_wrong.wav");
+    if (media->sfx_wrong == NULL) return false;
 
     return true;
 }
@@ -106,6 +115,9 @@ Screen screens_titlescreen_close(struct media_t *media, struct objects_t *object
     texture_free(media->tex_title);
     TTF_CloseFont(media->font);
     Mix_FreeMusic(media->music);
+    Mix_FreeChunk(media->sfx_click);
+    Mix_FreeChunk(media->sfx_right);
+    Mix_FreeChunk(media->sfx_wrong);
     free(media);
     free(objects);
     
@@ -123,6 +135,7 @@ void screens_titlescreen_init(Game *game, struct media_t *media, struct variable
                 var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
+                Mix_PlayChannel(-1, media->sfx_right, 0);
                 var->next = true;
             }
         }
@@ -167,7 +180,14 @@ void screens_titlescreen_nameinput(Game *game, struct media_t *media, struct obj
                 textbox_set_typable(objects->textbox, false);
                 var->next = true;
                 var->ret = SCREEN_MENU;
+                Mix_PlayChannel(-1, media->sfx_right, 0);
             }
+            else {
+                Mix_PlayChannel(-1, media->sfx_wrong, 0);
+            }
+        }
+        else if (textbox_ispressed(objects->textbox)) {
+            Mix_PlayChannel(-1, media->sfx_click, 0);
         }
 
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, NULL);

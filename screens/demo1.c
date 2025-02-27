@@ -39,6 +39,8 @@ struct media_t {
     TTF_Font *font;
 
     Mix_Music *music;
+    Mix_Chunk *sfx_click;
+    Mix_Chunk *sfx_right;
 };
 
 struct objects_t {
@@ -53,7 +55,8 @@ struct variables_t {
     int text_number;
     int text_offset;
     int old_points;
-    char str_points[5];
+    char str_points[7];
+    bool play_sound;
 };
 
 bool screens_demo1_loadmedia(Game *game, struct media_t *media, struct variables_t *var) {
@@ -87,13 +90,17 @@ bool screens_demo1_loadmedia(Game *game, struct media_t *media, struct variables
 
     texture_set_color_mod(media->tex_bg, COLOR_LBLUE, SDL_BLENDMODE_BLEND);
 
-    media->music = Mix_LoadMUS("snd/dong.wav");
+    media->music = Mix_LoadMUS("snd/demoproducts.wav");
     if (media->music == NULL) return false;
+    media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
+    if (media->sfx_click == NULL) return false;
+    media->sfx_right = Mix_LoadWAV("snd/sfx_right.wav");
+    if (media->sfx_right == NULL) return false;
     
     //NAME AND POINTS
     if(!texture_load_from_text(media->tex_name, game_get_renderer(game), media->font, game_get_name(game), COLOR_TEXT_DEFAULT_LIGHT)) return false;
 
-    sprintf(var->str_points, "%04d", var->old_points);
+    sprintf(var->str_points, "%06d", var->old_points);
     if(!texture_load_from_text(media->tex_points, game_get_renderer(game), media->font, var->str_points, COLOR_TEXT_DEFAULT_LIGHT)) return false;
 
     //TEXTS
@@ -109,35 +116,35 @@ bool screens_demo1_loadmedia(Game *game, struct media_t *media, struct variables
     if(!texture_load_from_text(media->tex_text[0][2], game_get_renderer(game), media->font, "+b)(", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[0][3], game_get_renderer(game), media->font, "a", COLOR_TEXT_HIGHLIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[0][4], game_get_renderer(game), media->font, "+b) = ", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[0][5], game_get_renderer(game), media->font, "a^2", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[0][5], game_get_renderer(game), media->font, "a²", COLOR_TEXT_HIGHLIGHT)) return false;
 
     if(!texture_load_from_text(media->tex_text[1][0], game_get_renderer(game), media->font, "(", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[1][1], game_get_renderer(game), media->font, "a", COLOR_TEXT_HIGHLIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[1][2], game_get_renderer(game), media->font, "+b)(a+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[1][3], game_get_renderer(game), media->font, "b", COLOR_TEXT_HIGHLIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[1][4], game_get_renderer(game), media->font, ") = a^2+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[1][4], game_get_renderer(game), media->font, ") = a²+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[1][5], game_get_renderer(game), media->font, "ab", COLOR_TEXT_HIGHLIGHT)) return false;
 
     if(!texture_load_from_text(media->tex_text[2][0], game_get_renderer(game), media->font, "(a+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[2][1], game_get_renderer(game), media->font, "b", COLOR_TEXT_HIGHLIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[2][2], game_get_renderer(game), media->font, ")(", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[2][3], game_get_renderer(game), media->font, "a", COLOR_TEXT_HIGHLIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[2][4], game_get_renderer(game), media->font, "+b) = a^2+ab+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[2][4], game_get_renderer(game), media->font, "+b) = a²+ab+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[2][5], game_get_renderer(game), media->font, "ba", COLOR_TEXT_HIGHLIGHT)) return false;
 
     if(!texture_load_from_text(media->tex_text[3][0], game_get_renderer(game), media->font, "(a+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[3][1], game_get_renderer(game), media->font, "b", COLOR_TEXT_HIGHLIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[3][2], game_get_renderer(game), media->font, ")(a+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[3][3], game_get_renderer(game), media->font, "b", COLOR_TEXT_HIGHLIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[3][4], game_get_renderer(game), media->font, ") = a^2+ab+ba+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[3][5], game_get_renderer(game), media->font, "b^2", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[3][4], game_get_renderer(game), media->font, ") = a²+ab+ba+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[3][5], game_get_renderer(game), media->font, "b²", COLOR_TEXT_HIGHLIGHT)) return false;
 
     if(!texture_load_from_text(media->tex_text[4][0], game_get_renderer(game), media->font, "(a+b)", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][1], game_get_renderer(game), media->font, "(a+b)", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][2], game_get_renderer(game), media->font, " = ", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[4][3], game_get_renderer(game), media->font, "a^2+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[4][3], game_get_renderer(game), media->font, "a²+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][4], game_get_renderer(game), media->font, "2ab", COLOR_TEXT_HIGHLIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[4][5], game_get_renderer(game), media->font, "+b^2", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[4][5], game_get_renderer(game), media->font, "+b²", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     
     media->tex_letters[0] = texture_create();
     if (media->tex_text[0] == NULL) return false;
@@ -159,10 +166,11 @@ bool screens_demo1_loadobjects(Game *game, struct objects_t *objects, struct med
 void screens_demo1_loadvariables(Game *game, struct variables_t *var) {
     var->next = false;
     var->ret = SCREEN_NEXT;
-    var->old_points = game_get_points(game, POINTS_ALL & !POINTS_1);
+    var->old_points = game_get_points(game, POINTS_ALL & ~POINTS_1);
     var->transition = 15;
     var->text_number = 0;
     var->text_offset = 8;
+    var->play_sound = false;
 }
 
 Screen screens_demo1_close(struct media_t *media, struct objects_t *objects, struct variables_t *var) {
@@ -179,6 +187,8 @@ Screen screens_demo1_close(struct media_t *media, struct objects_t *objects, str
     }
     TTF_CloseFont(media->font);
     Mix_FreeMusic(media->music);
+    Mix_FreeChunk(media->sfx_click);
+    Mix_FreeChunk(media->sfx_right);
     free(media);
     free(objects);
     Screen ret = var->ret;
@@ -191,12 +201,10 @@ void screens_demo1_drawbg(Game *game, struct media_t *media, struct variables_t 
     texture_set_as_render_target(media->tex_canvas, game_get_renderer(game));
     //draw rect
     SDL_Rect bgrect = {0, 0, 256, 256};
-    SDL_Rect testrect = {32, 32, 192, 192};
     SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_LWHITE.r, COLOR_LWHITE.g, COLOR_LWHITE.b, COLOR_LWHITE.a);
     SDL_RenderFillRect(game_get_renderer(game), &bgrect);
     SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DWHITE.r, COLOR_DWHITE.g, COLOR_DWHITE.b, COLOR_DWHITE.a);
     SDL_RenderDrawRect(game_get_renderer(game), &bgrect);
-    SDL_RenderFillRect(game_get_renderer(game), &testrect);
 
     //draw vertical lines
     SDL_SetRenderDrawColor(game_get_renderer(game), COLOR_DBLACK.r, COLOR_DBLACK.g, COLOR_DBLACK.b, COLOR_DBLACK.a);
@@ -260,11 +268,17 @@ void screens_demo1_intro(Game *game, struct media_t *media, struct objects_t *ob
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
             }
+            else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
+                var->play_sound = true;
+            }
             balloon_handle_event(objects->balloon, var->e);
         }
-
         if (balloon_read_more(objects->balloon)) {
             balloon_read_text(objects->balloon, game_get_renderer(game), media->font);
+            if (var->play_sound) {
+                Mix_PlayChannel(-1, media->sfx_click, 0);
+                var->play_sound = false;
+            }
         }
 
         balloon_calc_position(objects->balloon);
@@ -278,7 +292,6 @@ void screens_demo1_intro(Game *game, struct media_t *media, struct objects_t *ob
         
         //draw canvas
         screens_demo1_drawbg(game, media, var);
-        screens_demo1_drawsquares(game, media, var);
         texture_render(media->tex_canvas, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_canvas))/2, 32, NULL);
 
         balloon_render(objects->balloon, game_get_renderer(game));
@@ -298,10 +311,13 @@ void screens_demo1_demo(Game *game, struct media_t *media, struct objects_t *obj
                 var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
+                Mix_PlayChannel(-1, media->sfx_click, 0);
                 var->text_number += 1;
+                var->text_offset = 8;
                 if (var->text_number > 4) {
                     var->next = true;
                     var->text_number = 4;
+                    var->text_offset = 0;
                 }
                 SDL_Color alpha_mod = {255, 255, 255, 255};
                 for (int i = var->text_number; i >= 0; i--) {
@@ -310,7 +326,6 @@ void screens_demo1_demo(Game *game, struct media_t *media, struct objects_t *obj
                     }
                     alpha_mod.a /= 2;
                 }
-                var->text_offset = 8;
             }
         }
 
@@ -330,8 +345,8 @@ void screens_demo1_demo(Game *game, struct media_t *media, struct objects_t *obj
                 for (int j = 0; j < i; j++) {
                     x += texture_getw(media->tex_text[k][j]);
                 }
-                if (k < var->text_number) texture_render(media->tex_text[k][i], game_get_renderer(game), x, 304 - 8 * (var->text_number - k) + var->text_offset, NULL);
-                else texture_render(media->tex_text[k][i], game_get_renderer(game), x, 304 - 8 * (var->text_number - k), NULL);
+                if (k < var->text_number) texture_render(media->tex_text[k][i], game_get_renderer(game), x, 320 - 8 * (var->text_number - k) + var->text_offset, NULL);
+                else texture_render(media->tex_text[k][i], game_get_renderer(game), x, 320 - 8 * (var->text_number - k), NULL);
             }
         }
 
@@ -349,12 +364,25 @@ void screens_demo1_end(Game *game, struct media_t *media, struct objects_t *obje
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
             }
+            else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
+                var->play_sound = true;
+            }
             balloon_handle_event(objects->balloon, var->e);
         }
 
         if (balloon_read_more(objects->balloon)) {
             if (!balloon_read_text(objects->balloon, game_get_renderer(game), media->font)) {
+                if (var->play_sound) {
+                    Mix_PlayChannel(-1, media->sfx_right, 0);
+                    var->play_sound = false;
+                }
                 var->next = true;
+            }
+            else {
+                if (var->play_sound) {
+                    Mix_PlayChannel(-1, media->sfx_click, 0);
+                    var->play_sound = false;
+                }
             }
         }
 
@@ -368,6 +396,16 @@ void screens_demo1_end(Game *game, struct media_t *media, struct objects_t *obje
         screens_demo1_drawbg(game, media, var);
         screens_demo1_drawsquares(game, media, var);
         texture_render(media->tex_canvas, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_canvas))/2, 32, NULL);
+
+        for (int k = 0; k <= 4; k++) {
+            for (int i = 0; i < 6; i++) {
+                int x = 216;
+                for (int j = 0; j < i; j++) {
+                    x += texture_getw(media->tex_text[k][j]);
+                }
+                texture_render(media->tex_text[k][i], game_get_renderer(game), x, 320 - 8 * (4 - k), NULL);
+            }
+        }
 
         balloon_render(objects->balloon, game_get_renderer(game));
 

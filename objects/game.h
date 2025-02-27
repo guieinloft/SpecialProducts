@@ -11,7 +11,7 @@ typedef enum points_e {
     POINTS_2 = 0x00000002,
     POINTS_3 = 0x00000004,
     POINTS_4 = 0x00000008,
-    POINTS_ALL = 0x00000015,
+    POINTS_ALL = 0x000000F,
     POINTS_NONE = 0x00000000
 } Points;
 

@@ -29,5 +29,6 @@ void textbox_set_typable(Textbox *self, bool typable);
 char *textbox_get_text(Textbox *self);
 void textbox_set_text(Textbox *self, char *text);
 bool textbox_isempty(Textbox *self);
+bool textbox_ispressed(Textbox *self);
 
 #endif

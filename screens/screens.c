@@ -3,8 +3,12 @@
 #include "titlescreen.h"
 #include "testscreen1.h"
 #include "menu.h"
-#include "quiz1.h"
 #include "demo1.h"
+#include "quiz1.h"
+#include "demo2.h"
+#include "quiz2.h"
+#include "demo3.h"
+#include "quiz3.h"
 
 Screen screens_redirect(Screen screen, Game *game) {
     switch (screen) {
@@ -18,6 +22,14 @@ Screen screens_redirect(Screen screen, Game *game) {
         return screens_demo1(game);
         case SCREEN_QUIZ1:
         return screens_quiz1(game);
+        case SCREEN_DEMO2:
+        return screens_demo2(game);
+        case SCREEN_QUIZ2:
+        return screens_quiz2(game);
+        case SCREEN_DEMO3:
+        return screens_demo3(game);
+        case SCREEN_QUIZ3:
+        return screens_quiz3(game);
         default:
         return screens_testscreen1(game);
     }

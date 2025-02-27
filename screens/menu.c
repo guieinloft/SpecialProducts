@@ -29,6 +29,7 @@ struct media_t {
     TTF_Font *font;
 
     Mix_Music *music;
+    Mix_Chunk *sfx_click;
 };
 
 struct objects_t {
@@ -75,14 +76,16 @@ bool screens_menu_loadmedia(Game *game, struct media_t *media, struct variables_
     media->clip_bg.w = SCREEN_W;
     media->clip_bg.h = SCREEN_H;
     
-    media->music = Mix_LoadMUS("snd/dong.wav");
+    media->music = Mix_LoadMUS("snd/menuproducts.wav");
     if (media->music == NULL) return false;
+    media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
+    if (media->sfx_click == NULL) return false;
 
     //NAME AND POINTS
     if(!texture_load_from_text(media->tex_name, game_get_renderer(game), media->font, game_get_name(game), COLOR_TEXT_DEFAULT_LIGHT)) return false;
 
-    char str_points[5];
-    sprintf(str_points, "%04d", var->points);
+    char str_points[7];
+    sprintf(str_points, "%06d", var->points);
     if(!texture_load_from_text(media->tex_points, game_get_renderer(game), media->font, str_points, COLOR_TEXT_DEFAULT_LIGHT)) return false;
 
     return true;
@@ -147,6 +150,7 @@ Screen screens_menu_close(struct media_t *media, struct objects_t *objects, stru
     texture_free(media->tex_points);
     TTF_CloseFont(media->font);
     Mix_FreeMusic(media->music);
+    Mix_FreeChunk(media->sfx_click);
     free(media);
     free(objects);
     Screen ret = var->ret;
@@ -186,29 +190,35 @@ void screens_menu_menu(Game *game, struct media_t *media, struct objects_t *obje
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
         game_render(game, var->transition);
 
-        if (button_isselected(objects->button1)) {
+        if (button_ispressed(objects->button1)) {
             var->ret = SCREEN_DEMO1;
             var->next = true;
+            Mix_PlayChannel(-1, media->sfx_click, 0);
         }
-        if (button_isselected(objects->button2)) {
+        if (button_ispressed(objects->button2)) {
             var->ret = SCREEN_DEMO2;
             var->next = true;
+            Mix_PlayChannel(-1, media->sfx_click, 0);
         }
-        if (button_isselected(objects->button3)) {
+        if (button_ispressed(objects->button3)) {
             var->ret = SCREEN_DEMO3;
             var->next = true;
+            Mix_PlayChannel(-1, media->sfx_click, 0);
         }
-        if (button_isselected(objects->button4)) {
+        if (button_ispressed(objects->button4)) {
             var->ret = SCREEN_DEMO4;
             var->next = true;
+            Mix_PlayChannel(-1, media->sfx_click, 0);
         }
-        if (button_isselected(objects->bt_back)) {
+        if (button_ispressed(objects->bt_back)) {
             var->ret = SCREEN_TITLESCREEN;
             var->next = true;
+            Mix_PlayChannel(-1, media->sfx_click, 0);
         }
-        if (button_isselected(objects->bt_exit)) {
+        if (button_ispressed(objects->bt_exit)) {
             var->ret = SCREEN_QUIT;
             var->next = true;
+            Mix_PlayChannel(-1, media->sfx_click, 0);
         }
         if (var->next) {
             var->transition -= 16;

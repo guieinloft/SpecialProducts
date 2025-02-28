@@ -19,7 +19,7 @@
 #include "screens/titlescreen.h"
 #include "screens/testscreen1.h"
 
-int main() {
+int main(int argc, char **argv) {
     srand(time(0));
     //init sdl game
     Game *game = game_init();

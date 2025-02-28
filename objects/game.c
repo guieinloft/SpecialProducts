@@ -9,6 +9,8 @@
 
 #include "game.h"
 
+#define TICKS_PER_FRAME 1000/60
+
 struct game_t {
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -35,7 +37,7 @@ Game *game_init(void) {
     assert(self->window != NULL);
 
     //create renderer
-    self->renderer = SDL_CreateRenderer(self->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    self->renderer = SDL_CreateRenderer(self->window, -1, SDL_RENDERER_ACCELERATED);
     assert(self->renderer != NULL);
 
     //set renderer color
@@ -93,6 +95,7 @@ void game_close(Game *self) {
 }
 
 void game_render(Game *self, uint8_t alpha) {
+    uint32_t ticks_start = SDL_GetTicks();
     //set target texture alpha
     SDL_SetTextureAlphaMod(self->target, alpha);
     //save screen
@@ -112,6 +115,10 @@ void game_render(Game *self, uint8_t alpha) {
     //clear target texture
     SDL_SetRenderDrawColor(self->renderer, 0, 0, 0, 255);
     SDL_RenderClear(self->renderer);
+    uint32_t ticks_now = SDL_GetTicks();
+    if (TICKS_PER_FRAME > ticks_now - ticks_start) {
+        SDL_Delay(TICKS_PER_FRAME + ticks_start - ticks_now);
+    }
 }
 
 SDL_Renderer *game_get_renderer(Game *self) {

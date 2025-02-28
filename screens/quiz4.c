@@ -73,15 +73,15 @@ struct variables_t {
 };
 
 //QUESTION DEFINITIONS
-Question *quiz3_question_n_create(int n);
-Question *quiz3_question_1_7_create(bool inverted);
-Question *quiz3_question_2_8_create(bool inverted);
-Question *quiz3_question_3_9_create(bool inverted);
-Question *quiz3_question_4_10_create(bool inverted);
-Question *quiz3_question_5_11_create(bool inverted);
-Question *quiz3_question_6_12_create(bool inverted);
+Question *quiz4_question_n_create(int n);
+Question *quiz4_question_1_7_create(bool inverted);
+Question *quiz4_question_2_8_create(bool inverted);
+Question *quiz4_question_3_9_create(bool inverted);
+Question *quiz4_question_4_10_create(bool inverted);
+Question *quiz4_question_5_11_create(bool inverted);
+Question *quiz4_question_6_12_create(bool inverted);
 
-bool screens_quiz3_loadmedia(Game *game, struct media_t *media, struct variables_t *var) {
+bool screens_quiz4_loadmedia(Game *game, struct media_t *media, struct variables_t *var) {
     media->tex_button = texture_create();
     if (media->tex_button == NULL) return false;
     media->tex_bg = texture_create();
@@ -109,7 +109,7 @@ bool screens_quiz3_loadmedia(Game *game, struct media_t *media, struct variables
     media->clip_bg.w = SCREEN_W;
     media->clip_bg.h = SCREEN_H;
 
-    texture_set_color_mod(media->tex_bg, COLOR_LYELLOW, SDL_BLENDMODE_BLEND);
+    texture_set_color_mod(media->tex_bg, COLOR_LRED, SDL_BLENDMODE_BLEND);
 
     for (int i = 0; i < 12; i++) {
         media->tex_questions[i] = texture_create();
@@ -142,10 +142,10 @@ bool screens_quiz3_loadmedia(Game *game, struct media_t *media, struct variables
     return true;
 }
 
-bool screens_quiz3_loadobjects(Game *game, struct objects_t *objects, struct media_t *media, struct variables_t *var) {
+bool screens_quiz4_loadobjects(Game *game, struct objects_t *objects, struct media_t *media, struct variables_t *var) {
     //create question containers
     for (int i = 0; i < 12; i++) {
-        objects->questions[i] = quiz3_question_n_create(i);
+        objects->questions[i] = quiz4_question_n_create(i);
         if (objects->questions[i] == NULL) return false;
         
         texture_load_from_text(media->tex_questions[i], game_get_renderer(game), media->font, question_get_q_text(objects->questions[i]), COLOR_TEXT_DEFAULT_LIGHT);
@@ -168,7 +168,7 @@ bool screens_quiz3_loadobjects(Game *game, struct objects_t *objects, struct med
     return true;
 }
 
-void screens_quiz3_loadvariables(Game *game, struct variables_t *var) {
+void screens_quiz4_loadvariables(Game *game, struct variables_t *var) {
     var->next = false;
     for (int i = 0; i < 12; i++) {
         var->correct[i] = false;
@@ -179,13 +179,13 @@ void screens_quiz3_loadvariables(Game *game, struct variables_t *var) {
     var->autocomplete = false;
     var->rerender_points = false;
     var->ret = SCREEN_NEXT;
-    var->old_points = game_get_points(game, POINTS_ALL & ~POINTS_3);
+    var->old_points = game_get_points(game, POINTS_ALL & ~POINTS_4);
     var->current_points = 0;
     var->remaining_time = TICKS_TOTAL;
     var->transition = 15;
 }
 
-Screen screens_quiz3_close(struct media_t *media, struct objects_t *objects, struct variables_t *var) {
+Screen screens_quiz4_close(struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     for (int i = 0; i < 12; i++) {
         question_free(objects->questions[i]);
         texture_free(media->tex_questions[i]);
@@ -216,7 +216,7 @@ Screen screens_quiz3_close(struct media_t *media, struct objects_t *objects, str
     return ret;
 }
 
-void screens_quiz3_quiz(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
+void screens_quiz4_quiz(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     timer_start(objects->timer);
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
@@ -307,7 +307,7 @@ void screens_quiz3_quiz(Game *game, struct media_t *media, struct objects_t *obj
     timer_stop(objects->timer);
 }
 
-void screens_quiz3_results(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
+void screens_quiz4_results(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     int timer = 120;
 
     if (var->correct_all) {
@@ -369,7 +369,7 @@ void screens_quiz3_results(Game *game, struct media_t *media, struct objects_t *
     var->ret = SCREEN_MENU;
 }
 
-Screen screens_quiz3(Game *game) {
+Screen screens_quiz4(Game *game) {
     struct media_t *media = (struct media_t*)malloc(sizeof(struct media_t));
     struct objects_t *objects = (struct objects_t*)malloc(sizeof(struct objects_t));
     struct variables_t *var = (struct variables_t*)malloc(sizeof(struct variables_t));
@@ -377,19 +377,19 @@ Screen screens_quiz3(Game *game) {
         printf("Couldnt open structs\n");
         return SCREEN_ERROR;
     }
-    screens_quiz3_loadvariables(game, var);
-    if (!screens_quiz3_loadmedia(game, media, var)) {
+    screens_quiz4_loadvariables(game, var);
+    if (!screens_quiz4_loadmedia(game, media, var)) {
         printf("Couldnt open textures\n");
         return SCREEN_ERROR;
     }
-    if (!screens_quiz3_loadobjects(game, objects, media, var)) {
+    if (!screens_quiz4_loadobjects(game, objects, media, var)) {
         printf("Couldnt open objects\n");
         return SCREEN_ERROR;
     }
     
     Mix_PlayMusic(media->music, -1);
 
-    screens_quiz3_quiz(game, media, objects, var);
+    screens_quiz4_quiz(game, media, objects, var);
 
     Mix_HaltMusic();
 
@@ -398,27 +398,27 @@ Screen screens_quiz3(Game *game) {
     //points tally
     var->next = false;
     if (var->ret == SCREEN_NEXT) {
-        screens_quiz3_results(game, media, objects, var);
+        screens_quiz4_results(game, media, objects, var);
     }
     if (var->correct_all) {
-        game_set_points(game, POINTS_3, var->current_points);
+        game_set_points(game, POINTS_4, var->current_points);
     }
 
-    return screens_quiz3_close(media, objects, var);
+    return screens_quiz4_close(media, objects, var);
 }
 
 //QUESTIONS {{{1
 
-Question *quiz3_question_1_7_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = 0;
-    int c = 0;
+Question *quiz4_question_1_7_create(bool inverted) {
+    int a = 0;
+    int b = rand() % 9 + 1;
+    int c = rand() % 9 + 1;
 
     char text1[TEXTBOX_TEXT_SIZE];
     char text2[TEXTBOX_TEXT_SIZE];
 
-    sprintf(text1, "(x+%d)(x-%d)", a, a);
-    sprintf(text2, "x²-%d", a*a);
+    sprintf(text1, "x²-%dx+%d", b+c, b*c);
+    sprintf(text2, "(x-%d)(x-%d)", b, c);
 
     if (inverted) {
         return question_create(a, b, c, text2, text1);
@@ -426,16 +426,23 @@ Question *quiz3_question_1_7_create(bool inverted) {
     return question_create(a, b, c, text1, text2);
 }
 
-Question *quiz3_question_2_8_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = 0;
-    int c = 0;
+Question *quiz4_question_2_8_create(bool inverted) {
+    int a = 0;
+    int b = rand() % 9 + 1;
+    int c = rand() % 9 + 1;
 
     char text1[TEXTBOX_TEXT_SIZE];
     char text2[TEXTBOX_TEXT_SIZE];
 
-    sprintf(text1, "(%d+x)(%d-x)", a, a);
-    sprintf(text2, "%d-x²", a*a);
+    if (c-b == 1)
+        sprintf(text1, "x²+x-%d", b*c);
+    else if (c-b == -1)
+        sprintf(text1, "x²-x-%d", b*c);
+    else if (c-b == 0)
+        sprintf(text1, "x²-%d", b*c);
+    else
+        sprintf(text1, "x²%+dx-%d", c-b, b*c);
+    sprintf(text2, "(x-%d)(x+%d)", b, c);
 
     if (inverted) {
         return question_create(a, b, c, text2, text1);
@@ -443,16 +450,16 @@ Question *quiz3_question_2_8_create(bool inverted) {
     return question_create(a, b, c, text1, text2);
 }
 
-Question *quiz3_question_3_9_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = 0;
-    int c = 0;
+Question *quiz4_question_3_9_create(bool inverted) {
+    int a = 0;
+    int b = rand() % 9 + 1;
+    int c = rand() % 9 + 1;
 
     char text1[TEXTBOX_TEXT_SIZE];
     char text2[TEXTBOX_TEXT_SIZE];
 
-    sprintf(text1, "(y+%d)(y-%d)", a, a);
-    sprintf(text2, "y²-%d", a*a);
+    sprintf(text1, "x²+%dx+%d", b+c, b*c);
+    sprintf(text2, "(x+%d)(x+%d)", b, c);
 
     if (inverted) {
         return question_create(a, b, c, text2, text1);
@@ -460,16 +467,16 @@ Question *quiz3_question_3_9_create(bool inverted) {
     return question_create(a, b, c, text1, text2);
 }
 
-Question *quiz3_question_4_10_create(bool inverted) {
-    int a = (rand() % 4 + 1) * 2 + 1;
-    int b = 0;
-    int c = 0;
+Question *quiz4_question_4_10_create(bool inverted) {
+    int a = 0;
+    int b = rand() % 9 + 1;
+    int c = rand() % 9 + 1;
 
     char text1[TEXTBOX_TEXT_SIZE];
     char text2[TEXTBOX_TEXT_SIZE];
 
-    sprintf(text1, "(x/2+%d/2)(x/2-%d/2)", a, a);
-    sprintf(text2, "x²/4-%d/4", a*a);
+    sprintf(text1, "2x²-%dx+%d", 2*(b+c), 2*b*c);
+    sprintf(text2, "2(x-%d)(x-%d)", b, c);
 
     if (inverted) {
         return question_create(a, b, c, text2, text1);
@@ -477,16 +484,16 @@ Question *quiz3_question_4_10_create(bool inverted) {
     return question_create(a, b, c, text1, text2);
 }
 
-Question *quiz3_question_5_11_create(bool inverted) {
-    int a = rand() % 3 + 2;
-    int b = rand() % 8 + 2;
-    int c = 0;
+Question *quiz4_question_5_11_create(bool inverted) {
+    int a = rand() % 4 + 3;
+    int b = rand() % 9 + 1;
+    int c = rand() % 9 + 1;
 
     char text1[TEXTBOX_TEXT_SIZE];
     char text2[TEXTBOX_TEXT_SIZE];
 
-    sprintf(text1, "(%dx+%d)(%dx-%d)", a, b, a, b);
-    sprintf(text2, "%dx²-%d", a*a, b*b);
+    sprintf(text1, "%dx²-%dx+%d", a, a*(b+c), a*b*c);
+    sprintf(text2, "%d(x-%d)(x-%d)", a, b, c);
 
     if (inverted) {
         return question_create(a, b, c, text2, text1);
@@ -494,16 +501,19 @@ Question *quiz3_question_5_11_create(bool inverted) {
     return question_create(a, b, c, text1, text2);
 }
 
-Question *quiz3_question_6_12_create(bool inverted) {
-    int a = rand() % 8 + 2;
-    int b = rand() % 8 + 2;
-    int c = 0;
+Question *quiz4_question_6_12_create(bool inverted) {
+    int a = rand() % 4 + 3;
+    int b = rand() % 9 + 1;
+    int c = rand() % 9 + 1;
 
     char text1[TEXTBOX_TEXT_SIZE];
     char text2[TEXTBOX_TEXT_SIZE];
-
-    sprintf(text1, "(%dx+%dy)(%dx-%dy)", a, b, a, b);
-    sprintf(text2, "%dx²-%dy²", a*a, b*b);
+    
+    if (c-b == 0)
+        sprintf(text1, "%dy²-%d", a, a*b*c);
+    else
+        sprintf(text1, "%dy²%+dy-%d", a, a*(b-c), a*b*c);
+    sprintf(text2, "%d(y+%d)(y-%d)", a, b, c);
 
     if (inverted) {
         return question_create(a, b, c, text2, text1);
@@ -511,32 +521,32 @@ Question *quiz3_question_6_12_create(bool inverted) {
     return question_create(a, b, c, text1, text2);
 }
 
-Question *quiz3_question_n_create(int n) {
+Question *quiz4_question_n_create(int n) {
     switch(n) {
         case 0:
-        return quiz3_question_1_7_create(false);
+        return quiz4_question_1_7_create(false);
         case 1:
-        return quiz3_question_2_8_create(false);
+        return quiz4_question_2_8_create(false);
         case 2:
-        return quiz3_question_3_9_create(false);
+        return quiz4_question_3_9_create(false);
         case 3:
-        return quiz3_question_4_10_create(false);
+        return quiz4_question_4_10_create(false);
         case 4:
-        return quiz3_question_5_11_create(false);
+        return quiz4_question_5_11_create(false);
         case 5:
-        return quiz3_question_6_12_create(false);
+        return quiz4_question_6_12_create(false);
         case 6:
-        return quiz3_question_1_7_create(true);
+        return quiz4_question_1_7_create(true);
         case 7:
-        return quiz3_question_2_8_create(true);
+        return quiz4_question_2_8_create(true);
         case 8:
-        return quiz3_question_3_9_create(true);
+        return quiz4_question_3_9_create(true);
         case 9:
-        return quiz3_question_4_10_create(true);
+        return quiz4_question_4_10_create(true);
         case 10:
-        return quiz3_question_5_11_create(true);
+        return quiz4_question_5_11_create(true);
         case 11:
-        return quiz3_question_6_12_create(true);
+        return quiz4_question_6_12_create(true);
         default:
         return NULL;
     }

@@ -112,44 +112,44 @@ bool screens_demo2_loadmedia(Game *game, struct media_t *media, struct variables
     }
 
     if(!texture_load_from_text(media->tex_text[0][0], game_get_renderer(game), media->font, "(", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[0][1], game_get_renderer(game), media->font, "a", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[0][1], game_get_renderer(game), media->font, "a", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[0][2], game_get_renderer(game), media->font, "-b)(", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[0][3], game_get_renderer(game), media->font, "a", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[0][3], game_get_renderer(game), media->font, "a", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[0][4], game_get_renderer(game), media->font, "-b) = ", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[0][5], game_get_renderer(game), media->font, "a²", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[0][5], game_get_renderer(game), media->font, "a²", COLOR_DRED)) return false;
 
     if(!texture_load_from_text(media->tex_text[1][0], game_get_renderer(game), media->font, "(", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[1][1], game_get_renderer(game), media->font, "a", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[1][1], game_get_renderer(game), media->font, "a", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[1][2], game_get_renderer(game), media->font, "-b)(a", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[1][3], game_get_renderer(game), media->font, "-b", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[1][3], game_get_renderer(game), media->font, "-b", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[1][4], game_get_renderer(game), media->font, ") = a²", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[1][5], game_get_renderer(game), media->font, "-ab", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[1][5], game_get_renderer(game), media->font, "-ab", COLOR_DRED)) return false;
 
     if(!texture_load_from_text(media->tex_text[2][0], game_get_renderer(game), media->font, "(a", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[2][1], game_get_renderer(game), media->font, "-b", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[2][1], game_get_renderer(game), media->font, "-b", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[2][2], game_get_renderer(game), media->font, ")(", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[2][3], game_get_renderer(game), media->font, "a", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[2][3], game_get_renderer(game), media->font, "a", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[2][4], game_get_renderer(game), media->font, "-b) = a²-ab", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[2][5], game_get_renderer(game), media->font, "-ba", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[2][5], game_get_renderer(game), media->font, "-ba", COLOR_DRED)) return false;
 
     if(!texture_load_from_text(media->tex_text[3][0], game_get_renderer(game), media->font, "(a", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[3][1], game_get_renderer(game), media->font, "-b", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[3][1], game_get_renderer(game), media->font, "-b", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[3][2], game_get_renderer(game), media->font, ")(a", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[3][3], game_get_renderer(game), media->font, "-b", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[3][3], game_get_renderer(game), media->font, "-b", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[3][4], game_get_renderer(game), media->font, ") = a²-ab-ba", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[3][5], game_get_renderer(game), media->font, "+b²", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[3][5], game_get_renderer(game), media->font, "+b²", COLOR_DRED)) return false;
 
     if(!texture_load_from_text(media->tex_text[4][0], game_get_renderer(game), media->font, "(a-b)", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][1], game_get_renderer(game), media->font, "(a-b)", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][2], game_get_renderer(game), media->font, " = ", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text[4][3], game_get_renderer(game), media->font, "a²-", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text[4][4], game_get_renderer(game), media->font, "2ab", COLOR_TEXT_HIGHLIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text[4][4], game_get_renderer(game), media->font, "2ab", COLOR_DRED)) return false;
     if(!texture_load_from_text(media->tex_text[4][5], game_get_renderer(game), media->font, "+b²", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     
     media->tex_letters[0] = texture_create();
-    if (media->tex_text[0] == NULL) return false;
+    if (media->tex_letters[0] == NULL) return false;
     media->tex_letters[1] = texture_create();
-    if (media->tex_text[1] == NULL) return false;
+    if (media->tex_letters[1] == NULL) return false;
     
     if(!texture_load_from_text(media->tex_letters[0], game_get_renderer(game), media->font, "a", COLOR_TEXT_DEFAULT)) return false;
     if(!texture_load_from_text(media->tex_letters[1], game_get_renderer(game), media->font, "b", COLOR_TEXT_DEFAULT)) return false;
@@ -185,6 +185,9 @@ Screen screens_demo2_close(struct media_t *media, struct objects_t *objects, str
             texture_free(media->tex_text[i][j]);
         }
     }
+    texture_free(media->tex_letters[0]);
+    texture_free(media->tex_letters[1]);
+    texture_free(media->tex_canvas);
     TTF_CloseFont(media->font);
     Mix_FreeMusic(media->music);
     Mix_FreeChunk(media->sfx_click);

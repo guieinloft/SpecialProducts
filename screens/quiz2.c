@@ -61,7 +61,7 @@ struct variables_t {
     bool autocomplete;
     bool rerender_points;
     char str_points[7];
-    char str_time[10];
+    char str_time[15];
     int old_points;
     int current_points;
     int remaining_time;

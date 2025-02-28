@@ -35,6 +35,8 @@ Textbox *textbox_create (int x, int y, Texture *tex_button) {
     self->typable = true;
     self->render = true;
     self->enter = false;
+
+    return self;
 }
 
 void textbox_free(Textbox *self) {

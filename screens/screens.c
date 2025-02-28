@@ -9,6 +9,8 @@
 #include "quiz2.h"
 #include "demo3.h"
 #include "quiz3.h"
+#include "demo4.h"
+#include "quiz4.h"
 
 Screen screens_redirect(Screen screen, Game *game) {
     switch (screen) {
@@ -30,6 +32,10 @@ Screen screens_redirect(Screen screen, Game *game) {
         return screens_demo3(game);
         case SCREEN_QUIZ3:
         return screens_quiz3(game);
+        case SCREEN_DEMO4:
+        return screens_demo4(game);
+        case SCREEN_QUIZ4:
+        return screens_quiz4(game);
         default:
         return screens_testscreen1(game);
     }

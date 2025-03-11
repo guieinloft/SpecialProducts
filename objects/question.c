@@ -14,11 +14,12 @@ struct question_t {
     int b;
     int c;
     char q_text[TEXTBOX_TEXT_SIZE + 1];
-    char a_text[TEXTBOX_TEXT_SIZE + 1];
+    char a1_text[TEXTBOX_TEXT_SIZE + 1];
+    char a2_text[TEXTBOX_TEXT_SIZE + 1];
     int points;
 };
 
-Question *question_create(int a, int b, int c, char *q_text, char *a_text) {
+Question *question_create(int a, int b, int c, char *q_text, char *a1_text, char *a2_text) {
     Question *self = (Question*)malloc(sizeof(Question));
     if (self == NULL) return NULL;
 
@@ -27,7 +28,8 @@ Question *question_create(int a, int b, int c, char *q_text, char *a_text) {
     self->c = c;
 
     memcpy(self->q_text, q_text, TEXTBOX_TEXT_SIZE);
-    memcpy(self->a_text, a_text, TEXTBOX_TEXT_SIZE);
+    memcpy(self->a1_text, a1_text, TEXTBOX_TEXT_SIZE);
+    memcpy(self->a2_text, a2_text, TEXTBOX_TEXT_SIZE);
 
     self->points = QUESTION_POINTS;
     
@@ -39,7 +41,7 @@ void question_free(Question *self) {
 }
 
 bool question_compare(Question *self, char *a_text) {
-    bool correct = (strcmp(self->a_text, a_text) == 0);
+    bool correct = (strcmp(self->a1_text, a_text) == 0) | (strcmp(self->a2_text, a_text) == 0);
     if (!correct && self->points > 0) {
         self->points -= QUESTION_PUNISH;
     }
@@ -52,7 +54,7 @@ char *question_get_q_text(Question *self) {
 }
 
 char *question_get_a_text(Question *self) {
-    return self->a_text;
+    return self->a1_text;
 }
 
 int question_get_points(Question *self) {

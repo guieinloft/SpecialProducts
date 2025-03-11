@@ -254,7 +254,8 @@ Screen screens_demo4_close(struct media_t *media, struct objects_t *objects, str
 void screens_demo4_intro(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -277,6 +278,7 @@ void screens_demo4_intro(Game *game, struct media_t *media, struct objects_t *ob
             var->next = true;
         }
     
+        game_clear_screen(game);
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
@@ -292,7 +294,8 @@ void screens_demo4_intro(Game *game, struct media_t *media, struct objects_t *ob
 void screens_demo4_demo1(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -316,6 +319,7 @@ void screens_demo4_demo1(Game *game, struct media_t *media, struct objects_t *ob
             }
         }
 
+        game_clear_screen(game);
 
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
@@ -341,7 +345,8 @@ void screens_demo4_demo1(Game *game, struct media_t *media, struct objects_t *ob
 void screens_demo4_middle1(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -365,6 +370,7 @@ void screens_demo4_middle1(Game *game, struct media_t *media, struct objects_t *
             var->next = true;
         }
     
+        game_clear_screen(game);
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
@@ -388,7 +394,8 @@ void screens_demo4_middle1(Game *game, struct media_t *media, struct objects_t *
 void screens_demo4_demo2(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -412,6 +419,7 @@ void screens_demo4_demo2(Game *game, struct media_t *media, struct objects_t *ob
             }
         }
 
+        game_clear_screen(game);
 
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
@@ -447,7 +455,8 @@ void screens_demo4_demo2(Game *game, struct media_t *media, struct objects_t *ob
 void screens_demo4_middle2(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -471,6 +480,7 @@ void screens_demo4_middle2(Game *game, struct media_t *media, struct objects_t *
             var->next = true;
         }
     
+        game_clear_screen(game);
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
@@ -504,7 +514,8 @@ void screens_demo4_middle2(Game *game, struct media_t *media, struct objects_t *
 void screens_demo4_demo3(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -528,6 +539,7 @@ void screens_demo4_demo3(Game *game, struct media_t *media, struct objects_t *ob
             }
         }
 
+        game_clear_screen(game);
 
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
@@ -573,7 +585,8 @@ void screens_demo4_demo3(Game *game, struct media_t *media, struct objects_t *ob
 void screens_demo4_end(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next || var->transition > 0) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -602,6 +615,7 @@ void screens_demo4_end(Game *game, struct media_t *media, struct objects_t *obje
 
         balloon_calc_position(objects->balloon);
     
+        game_clear_screen(game);
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);

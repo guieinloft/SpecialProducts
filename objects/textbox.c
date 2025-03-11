@@ -87,8 +87,8 @@ bool textbox_handle_textinput(Textbox *self, SDL_Event e) {
     return false;
 }
 
-void textbox_handle_event(Textbox *self, SDL_Event e, double scalex, double scaley) {
-    button_handle_event(self->button, e, scalex, scaley);
+void textbox_handle_event(Textbox *self, SDL_Event e, double scalex, double scaley, int screenx, int screeny) {
+    button_handle_event(self->button, e, scalex, scaley, screenx, screeny);
     if (!button_isselected(self->button)) return;
     if (!self->typable) return;
 

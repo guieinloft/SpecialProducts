@@ -10,7 +10,7 @@
 
 typedef struct question_t Question;
 
-Question *question_create(int a, int b, int c, char *q_text, char *a_text);
+Question *question_create(int a, int b, int c, char *q_text, char *a1_text, char *a2_text);
 void question_free(Question *self);
 bool question_compare(Question *self, char *a_text);
 char *question_get_q_text(Question *self);

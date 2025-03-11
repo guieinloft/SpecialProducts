@@ -129,7 +129,7 @@ Screen screens_titlescreen_close(struct media_t *media, struct objects_t *object
 void screens_titlescreen_init(Game *game, struct media_t *media, struct variables_t *var) {
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -139,6 +139,7 @@ void screens_titlescreen_init(Game *game, struct media_t *media, struct variable
                 var->next = true;
             }
         }
+        game_clear_screen(game);
 
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, NULL);
         if (var->flicker < 30) {
@@ -160,14 +161,15 @@ void screens_titlescreen_init(Game *game, struct media_t *media, struct variable
 void screens_titlescreen_nameinput(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     while (!var->next || var->transition > 0) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
             }
-            textbox_handle_event(objects->textbox, var->e, game_get_scalex(game), game_get_scaley(game));
-            button_handle_event(objects->bt_enter, var->e, game_get_scalex(game), game_get_scaley(game));
+            textbox_handle_event(objects->textbox, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_enter, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
+        game_clear_screen(game);
 
         //check button
         if (button_ispressed(objects->bt_enter)) {

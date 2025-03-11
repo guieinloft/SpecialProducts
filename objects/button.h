@@ -14,7 +14,7 @@ void button_free(Button *self);
 bool button_change_text(Button *self, SDL_Renderer *renderer, TTF_Font *font, char *text, int width, SDL_Color text_color, bool centered);
 void button_change_position(Button *self, int x, int y);
 
-void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley);
+void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley, int screenx, int screeny);
 
 void button_render(Button *self, SDL_Renderer *renderer);
 

@@ -220,15 +220,16 @@ void screens_quiz2_quiz(Game *game, struct media_t *media, struct objects_t *obj
     timer_start(objects->timer);
     while (!var->next) {
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
             }
             for (int i = 0; i < 12; i++) {
-                textbox_handle_event(objects->textboxes[i], var->e, game_get_scalex(game), game_get_scaley(game));
-                button_handle_event(objects->bt_enter[i], var->e, game_get_scalex(game), game_get_scaley(game));
-                button_handle_event(objects->bt_complete[i], var->e, game_get_scalex(game), game_get_scaley(game));
+                textbox_handle_event(objects->textboxes[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+                button_handle_event(objects->bt_enter[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+                button_handle_event(objects->bt_complete[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
             }
         }
 
@@ -286,6 +287,7 @@ void screens_quiz2_quiz(Game *game, struct media_t *media, struct objects_t *obj
             var->next = true;
         }
     
+        game_clear_screen(game);
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_text, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_text)) / 2, 32, NULL);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
@@ -336,7 +338,8 @@ void screens_quiz2_results(Game *game, struct media_t *media, struct objects_t *
         
         //if next
         while (SDL_PollEvent(&var->e) != 0) {
-            if (var->e.type == SDL_QUIT) {
+            if (game_handle_event(game, var->e)) {
+                game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
@@ -350,6 +353,7 @@ void screens_quiz2_results(Game *game, struct media_t *media, struct objects_t *
         sprintf(var->str_time, "%02d:%02d:%02d", var->remaining_time/60000, (var->remaining_time % 60000) / 1000, (var->remaining_time % 1000) / 10);
         texture_load_from_text(media->tex_time, game_get_renderer(game), media->font, var->str_time, COLOR_TEXT_DEFAULT_LIGHT);
         
+        game_clear_screen(game);
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, &media->clip_bg);
         texture_render(media->tex_text, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_text)) / 2, 32, NULL);
         texture_render(media->tex_name, game_get_renderer(game), 8, 8, NULL);
@@ -366,7 +370,6 @@ void screens_quiz2_results(Game *game, struct media_t *media, struct objects_t *
         game_render(game, var->transition);
         timer--;
     }
-    var->ret = SCREEN_MENU;
 }
 
 Screen screens_quiz2(Game *game) {
@@ -403,6 +406,7 @@ Screen screens_quiz2(Game *game) {
     if (var->correct_all) {
         game_set_points(game, POINTS_2, var->current_points);
     }
+    if (var->ret == SCREEN_NEXT) var->ret = SCREEN_MENU;
 
     return screens_quiz2_close(media, objects, var);
 }
@@ -421,9 +425,9 @@ Question *quiz2_question_1_7_create(bool inverted) {
     sprintf(text2, "x²-%dx+%d", a*2, a*a);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1);
+        return question_create(a, b, c, text2, text1, text1);
     }
-    return question_create(a, b, c, text1, text2);
+    return question_create(a, b, c, text1, text2, text2);
 }
 
 Question *quiz2_question_2_8_create(bool inverted) {
@@ -438,9 +442,9 @@ Question *quiz2_question_2_8_create(bool inverted) {
     sprintf(text2, "%d-%dx+x²", a*a, a*2);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1);
+        return question_create(a, b, c, text2, text1, text1);
     }
-    return question_create(a, b, c, text1, text2);
+    return question_create(a, b, c, text1, text2, text2);
 }
 
 Question *quiz2_question_3_9_create(bool inverted) {
@@ -455,9 +459,9 @@ Question *quiz2_question_3_9_create(bool inverted) {
     sprintf(text2, "y²-%dy+%d", a*2, a*a);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1);
+        return question_create(a, b, c, text2, text1, text1);
     }
-    return question_create(a, b, c, text1, text2);
+    return question_create(a, b, c, text1, text2, text2);
 }
 
 Question *quiz2_question_4_10_create(bool inverted) {
@@ -472,9 +476,9 @@ Question *quiz2_question_4_10_create(bool inverted) {
     sprintf(text2, "x²/4-%dx+%d/4", a, a*a);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1);
+        return question_create(a, b, c, text2, text1, text1);
     }
-    return question_create(a, b, c, text1, text2);
+    return question_create(a, b, c, text1, text2, text2);
 }
 
 Question *quiz2_question_5_11_create(bool inverted) {
@@ -489,9 +493,9 @@ Question *quiz2_question_5_11_create(bool inverted) {
     sprintf(text2, "%dx²-%dx+%d", a*a, 2*a*b, b*b);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1);
+        return question_create(a, b, c, text2, text1, text1);
     }
-    return question_create(a, b, c, text1, text2);
+    return question_create(a, b, c, text1, text2, text2);
 }
 
 Question *quiz2_question_6_12_create(bool inverted) {
@@ -506,9 +510,9 @@ Question *quiz2_question_6_12_create(bool inverted) {
     sprintf(text2, "%dx²-%dxy+%dy²", a*a, 2*a*b, b*b);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1);
+        return question_create(a, b, c, text2, text1, text1);
     }
-    return question_create(a, b, c, text1, text2);
+    return question_create(a, b, c, text1, text2, text2);
 }
 
 Question *quiz2_question_n_create(int n) {

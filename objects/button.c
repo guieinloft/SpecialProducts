@@ -82,7 +82,7 @@ void button_change_position(Button *self, int x, int y) {
     self->y = y;
 }
 
-void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley) {
+void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley, int screenx, int screeny) {
     if (e.type != SDL_MOUSEMOTION && e.type != SDL_MOUSEBUTTONDOWN && e.type != SDL_MOUSEBUTTONUP) return;
     int mousex, mousey;
     SDL_GetMouseState(&mousex, &mousey);
@@ -90,10 +90,10 @@ void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley
     //check if mouse is over button
     self->over = true;
 
-    if (mousex < (self->x - BUTTON_MARGIN) * scalex) self->over = false;
-    if (mousex > (self->x + (self->width + 2) * BUTTON_BLOCK_SIZE - BUTTON_MARGIN) * scalex) self->over = false;
-    if (mousey < (self->y - BUTTON_MARGIN) * scaley) self->over = false;
-    if (mousey > (self->y + BUTTON_HEIGHT - BUTTON_MARGIN) * scaley) self->over = false;
+    if (mousex < (self->x - BUTTON_MARGIN) * scalex + screenx) self->over = false;
+    if (mousex > (self->x + (self->width + 2) * BUTTON_BLOCK_SIZE - BUTTON_MARGIN) * scalex + screenx) self->over = false;
+    if (mousey < (self->y - BUTTON_MARGIN) * scaley + screeny) self->over = false;
+    if (mousey > (self->y + BUTTON_HEIGHT - BUTTON_MARGIN) * scaley + screeny) self->over = false;
 
     if (e.type == SDL_MOUSEBUTTONDOWN) {
         if (self->over) {

@@ -16,7 +16,7 @@ typedef struct textbox_t Textbox;
 Textbox *textbox_create (int x, int y, Texture *tex_button);
 void textbox_free(Textbox *self);
 
-void textbox_handle_event(Textbox *self, SDL_Event e, double scalex, double scaley);
+void textbox_handle_event(Textbox *self, SDL_Event e, double scalex, double scaley, int screenx, int screeny);
 
 void textbox_render(Textbox *self, SDL_Renderer *renderer, TTF_Font *font);
 

@@ -19,7 +19,7 @@ struct question_t {
     int points;
 };
 
-Question *question_create(int a, int b, int c, char *q_text, char *a1_text, char *a2_text) {
+Question *question_create(int a, int b, int c, char *q_text, char *a1_text, char *a2_text, bool bonus) {
     Question *self = (Question*)malloc(sizeof(Question));
     if (self == NULL) return NULL;
 
@@ -31,7 +31,7 @@ Question *question_create(int a, int b, int c, char *q_text, char *a1_text, char
     memcpy(self->a1_text, a1_text, TEXTBOX_TEXT_SIZE);
     memcpy(self->a2_text, a2_text, TEXTBOX_TEXT_SIZE);
 
-    self->points = QUESTION_POINTS;
+    self->points = QUESTION_POINTS + QUESTION_POINTS * bonus;
     
     return self;
 }

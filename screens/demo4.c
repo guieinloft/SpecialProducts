@@ -194,8 +194,8 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
     if(!texture_load_from_text(media->tex_text3[1][1], game_get_renderer(game), media->font, "x1+x2", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text3[1][2], game_get_renderer(game), media->font, ")x+a·", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text3[1][3], game_get_renderer(game), media->font, "x1·x2", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text3[1][4], game_get_renderer(game), media->font, " = ax²-", COLOR_TEXT_DEFAULT_LIGHT)) return false;
-    if(!texture_load_from_text(media->tex_text3[1][5], game_get_renderer(game), media->font, "b", COLOR_LGREEN)) return false;
+    if(!texture_load_from_text(media->tex_text3[1][4], game_get_renderer(game), media->font, " = ax²", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if(!texture_load_from_text(media->tex_text3[1][5], game_get_renderer(game), media->font, "+b", COLOR_LGREEN)) return false;
     if(!texture_load_from_text(media->tex_text3[1][6], game_get_renderer(game), media->font, "x+", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if(!texture_load_from_text(media->tex_text3[1][7], game_get_renderer(game), media->font, "c", COLOR_LGREEN)) return false;
     

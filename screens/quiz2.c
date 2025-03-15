@@ -30,7 +30,7 @@ struct media_t {
     Texture *tex_name;
     Texture *tex_points;
     Texture *tex_time;
-    Texture *tex_questions[12];
+    Texture *tex_questions[13];
     
     SDL_Rect clip_bg;
 
@@ -47,16 +47,16 @@ struct media_t {
 };
 
 struct objects_t {
-    Question *questions[12];
-    Textbox *textboxes[12];
-    Button *bt_enter[12];
-    Button *bt_complete[12];
+    Question *questions[13];
+    Textbox *textboxes[13];
+    Button *bt_enter[13];
+    Button *bt_complete[13];
     Timer *timer;
 };
 
 struct variables_t {
     bool next;
-    bool correct[12];
+    bool correct[13];
     bool correct_all;
     bool autocomplete;
     bool rerender_points;
@@ -65,8 +65,8 @@ struct variables_t {
     int old_points;
     int current_points;
     int remaining_time;
-    int question_x[12];
-    int question_y[12];
+    int question_x[13];
+    int question_y[13];
     Screen ret;
     SDL_Event e;
     int transition;
@@ -80,6 +80,7 @@ Question *quiz2_question_3_9_create(bool inverted);
 Question *quiz2_question_4_10_create(bool inverted);
 Question *quiz2_question_5_11_create(bool inverted);
 Question *quiz2_question_6_12_create(bool inverted);
+Question *quiz2_question_13_create();
 
 bool screens_quiz2_loadmedia(Game *game, struct media_t *media, struct variables_t *var) {
     media->tex_button = texture_create();
@@ -111,7 +112,7 @@ bool screens_quiz2_loadmedia(Game *game, struct media_t *media, struct variables
 
     texture_set_color_mod(media->tex_bg, COLOR_LGREEN, SDL_BLENDMODE_BLEND);
 
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 13; i++) {
         media->tex_questions[i] = texture_create();
         if (media->tex_questions[i] == NULL) return false;
     }
@@ -144,7 +145,7 @@ bool screens_quiz2_loadmedia(Game *game, struct media_t *media, struct variables
 
 bool screens_quiz2_loadobjects(Game *game, struct objects_t *objects, struct media_t *media, struct variables_t *var) {
     //create question containers
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 13; i++) {
         objects->questions[i] = quiz2_question_n_create(i);
         if (objects->questions[i] == NULL) return false;
         
@@ -161,6 +162,9 @@ bool screens_quiz2_loadobjects(Game *game, struct objects_t *objects, struct med
         if (objects->bt_complete[i] == NULL) return false;
         button_change_position(objects->bt_complete[i], var->question_x[i]+280, var->question_y[i]+8);
     }
+    char str_question_bonus[32];
+    sprintf(str_question_bonus, "BÔNUS: %s", question_get_q_text(objects->questions[12]));
+    texture_load_from_text(media->tex_questions[12], game_get_renderer(game), media->font, str_question_bonus, COLOR_TEXT_DEFAULT_LIGHT);
 
     //create timer
     objects->timer = timer_create();
@@ -175,6 +179,9 @@ void screens_quiz2_loadvariables(Game *game, struct variables_t *var) {
         var->question_x[i] = 8 + (i > 5) * SCREEN_W / 2;
         var->question_y[i] = 64 + (i % 6) * 40;
     }
+    var->correct[12] = false;
+    var->question_x[12] = 168;
+    var->question_y[12] = 304;
     var->correct_all = false;
     var->autocomplete = false;
     var->rerender_points = false;
@@ -186,7 +193,7 @@ void screens_quiz2_loadvariables(Game *game, struct variables_t *var) {
 }
 
 Screen screens_quiz2_close(struct media_t *media, struct objects_t *objects, struct variables_t *var) {
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 13; i++) {
         question_free(objects->questions[i]);
         texture_free(media->tex_questions[i]);
         textbox_free(objects->textboxes[i]);
@@ -226,7 +233,7 @@ void screens_quiz2_quiz(Game *game, struct media_t *media, struct objects_t *obj
                 var->ret = SCREEN_QUIT;
                 var->transition = 0;
             }
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < 13; i++) {
                 textbox_handle_event(objects->textboxes[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
                 button_handle_event(objects->bt_enter[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
                 button_handle_event(objects->bt_complete[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
@@ -236,7 +243,7 @@ void screens_quiz2_quiz(Game *game, struct media_t *media, struct objects_t *obj
         //check if questions are right
         var->correct_all = true;
         var->rerender_points = false;
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 13; i++) {
             //check if textbox is pressed
             if (textbox_ispressed(objects->textboxes[i])) {
                 Mix_PlayChannel(-1, media->sfx_click, 0);
@@ -294,7 +301,7 @@ void screens_quiz2_quiz(Game *game, struct media_t *media, struct objects_t *obj
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
         texture_render(media->tex_time, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_time)) / 2, 8, NULL);
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 13; i++) {
             texture_render(media->tex_questions[i], game_get_renderer(game), var->question_x[i], var->question_y[i], NULL);
             textbox_render(objects->textboxes[i], game_get_renderer(game), media->font);
             button_render(objects->bt_enter[i], game_get_renderer(game));
@@ -360,7 +367,7 @@ void screens_quiz2_results(Game *game, struct media_t *media, struct objects_t *
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
         texture_render(media->tex_time, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_time)) / 2, 8, NULL);
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 13; i++) {
             texture_render(media->tex_questions[i], game_get_renderer(game), var->question_x[i], var->question_y[i], NULL);
             textbox_render(objects->textboxes[i], game_get_renderer(game), media->font);
             button_render(objects->bt_enter[i], game_get_renderer(game));
@@ -425,9 +432,9 @@ Question *quiz2_question_1_7_create(bool inverted) {
     sprintf(text2, "x²-%dx+%d", a*2, a*a);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1, text1);
+        return question_create(a, b, c, text2, text1, text1, false);
     }
-    return question_create(a, b, c, text1, text2, text2);
+    return question_create(a, b, c, text1, text2, text2, false);
 }
 
 Question *quiz2_question_2_8_create(bool inverted) {
@@ -442,9 +449,9 @@ Question *quiz2_question_2_8_create(bool inverted) {
     sprintf(text2, "%d-%dx+x²", a*a, a*2);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1, text1);
+        return question_create(a, b, c, text2, text1, text1, false);
     }
-    return question_create(a, b, c, text1, text2, text2);
+    return question_create(a, b, c, text1, text2, text2, false);
 }
 
 Question *quiz2_question_3_9_create(bool inverted) {
@@ -459,9 +466,9 @@ Question *quiz2_question_3_9_create(bool inverted) {
     sprintf(text2, "y²-%dy+%d", a*2, a*a);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1, text1);
+        return question_create(a, b, c, text2, text1, text1, false);
     }
-    return question_create(a, b, c, text1, text2, text2);
+    return question_create(a, b, c, text1, text2, text2, false);
 }
 
 Question *quiz2_question_4_10_create(bool inverted) {
@@ -473,12 +480,12 @@ Question *quiz2_question_4_10_create(bool inverted) {
     char text2[TEXTBOX_TEXT_SIZE];
 
     sprintf(text1, "(x/2-%d/2)²", a);
-    sprintf(text2, "x²/4-%dx+%d/4", a, a*a);
+    sprintf(text2, "x²/4-%dx/2+%d/4", a, a*a);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1, text1);
+        return question_create(a, b, c, text2, text1, text1, false);
     }
-    return question_create(a, b, c, text1, text2, text2);
+    return question_create(a, b, c, text1, text2, text2, false);
 }
 
 Question *quiz2_question_5_11_create(bool inverted) {
@@ -493,9 +500,9 @@ Question *quiz2_question_5_11_create(bool inverted) {
     sprintf(text2, "%dx²-%dx+%d", a*a, 2*a*b, b*b);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1, text1);
+        return question_create(a, b, c, text2, text1, text1, false);
     }
-    return question_create(a, b, c, text1, text2, text2);
+    return question_create(a, b, c, text1, text2, text2, false);
 }
 
 Question *quiz2_question_6_12_create(bool inverted) {
@@ -510,9 +517,23 @@ Question *quiz2_question_6_12_create(bool inverted) {
     sprintf(text2, "%dx²-%dxy+%dy²", a*a, 2*a*b, b*b);
 
     if (inverted) {
-        return question_create(a, b, c, text2, text1, text1);
+        return question_create(a, b, c, text2, text1, text1, false);
     }
-    return question_create(a, b, c, text1, text2, text2);
+    return question_create(a, b, c, text1, text2, text2, false);
+}
+
+Question *quiz2_question_13_create() {
+    int a = rand() % 8 + 2;
+    int b = 0;
+    int c = 0;
+
+    char text1[TEXTBOX_TEXT_SIZE];
+    char text2[TEXTBOX_TEXT_SIZE];
+
+    sprintf(text1, "x(x-%d)²", a);
+    sprintf(text2, "x³-%dx²+%dx", 2*a, a*a);
+
+    return question_create(a, b, c, text2, text1, text1, true);
 }
 
 Question *quiz2_question_n_create(int n) {
@@ -541,6 +562,8 @@ Question *quiz2_question_n_create(int n) {
         return quiz2_question_5_11_create(true);
         case 11:
         return quiz2_question_6_12_create(true);
+        case 12:
+        return quiz2_question_13_create();
         default:
         return NULL;
     }

@@ -1,7 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#define TICKS_TOTAL 600000
+#define TICKS_TOTAL 900000
 
 typedef struct timer_t Timer;
 

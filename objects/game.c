@@ -92,7 +92,7 @@ Game *game_init(void) {
         self->options[OPTION_BILINEAR_FILTERING] = 0;
         for (int i = 0; i < 99; i++) {
             self->points_rank[i] = 0;
-            strcpy(self->name_rank[i], "TESTE");
+            strcpy(self->name_rank[i], "");
         }
     }
 
@@ -267,14 +267,21 @@ void game_calc_position(Game *self) {
     if (points == 0) return;
     if (self->position == 0 && self->score_num < 99) {
         self->score_num++;
-        self->position = self->score_num;
-        printf("%d\n", self->position);
+        self->position = self->score_num - 1;
     }
+    else self->position--;
+    printf("%d %d %s\n", self->position, self->points_rank[self->position], self->name_rank[self->position]);
+    printf("%d %s\n", points, self->name);
+    self->points_rank[self->position] = 0;
+    strcpy(self->name_rank[self->position], "");
+    self->position--;
 
-    while (--self->position > 0 && points > self->points_rank[self->position]) {
+    while (self->position >= 0 && points > self->points_rank[self->position]) {
         self->points_rank[self->position+1] = self->points_rank[self->position];
         strcpy(self->name_rank[self->position+1], self->name_rank[self->position]);
+        self->position--;
     }
+    self->position++;
     self->points_rank[self->position] = points;
     strcpy(self->name_rank[self->position], self->name);
     self->position++;
@@ -394,8 +401,7 @@ bool game_save(Game *self, bool complete) {
     FILE *log = fopen("./score_log.txt", "a+");
     if (log == NULL) return false;
     if (points > 0) {
-        if (complete) fprintf(log, "%s: %d\n", self->name, points);
-        else fprintf(log, "%s: %d (incompleto)\n", self->name, points);
+        fprintf(log, "%s: %d\n", self->name, points);
     }
     fclose(log);
     return true;

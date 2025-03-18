@@ -1,11 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-
-#include <stdlib.h>
-#include <stdio.h> //for testing only
-#include <stdbool.h>
-
+#include "game.h"
 #include "button.h"
 #include "texture.h"
 #include "textbox.h"

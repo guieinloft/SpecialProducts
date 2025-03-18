@@ -1,8 +1,21 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SDL2/SDL.h>
+//libc includes
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
+#include <string.h>
+#include <stdint.h>
+#include <assert.h>
+
+//sdl includes
+#define SDL_DISABLE_IMMINTRIN_H
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 #define SCREEN_W 640
 #define SCREEN_H 360

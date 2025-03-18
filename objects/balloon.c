@@ -1,17 +1,7 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-
-#include <stdlib.h>
-#include <stdio.h> //for testing only
-#include <stdbool.h>
-#include <string.h>
-#include <math.h>
-
+#include "game.h"
 #include "texture.h"
 #include "colors.h"
 #include "balloon.h"
-#include "game.h"
 
 struct balloon_t {
     int num_lines;

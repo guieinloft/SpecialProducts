@@ -1,5 +1,7 @@
 #include "screens.h"
+
 #include "../objects/game.h"
+
 #include "titlescreen.h"
 #include "testscreen1.h"
 #include "menu.h"

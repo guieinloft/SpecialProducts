@@ -1,16 +1,3 @@
-//libc includes
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
-#include <string.h>
-#include <stdint.h>
-
-//sdl includes
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
-
 //object includes
 #include "../objects/game.h"
 #include "../objects/texture.h"

@@ -1,9 +1,7 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <SDL2/SDL.h>
-#include <stdbool.h>
-
+#include "game.h"
 #include "texture.h"
 
 typedef struct button_t Button;

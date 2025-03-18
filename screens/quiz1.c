@@ -1,16 +1,3 @@
-//libc includes
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
-#include <string.h>
-#include <stdint.h>
-
-//sdl includes
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
-
 //object includes
 #include "../objects/game.h"
 #include "../objects/texture.h"
@@ -43,6 +30,7 @@ struct media_t {
     Mix_Chunk *sfx_auto;
     Mix_Chunk *sfx_win;
     Mix_Chunk *sfx_lose;
+    Mix_Chunk *sfx_bonus;
     Mix_Chunk *sfx_tally;
 };
 
@@ -130,6 +118,8 @@ bool screens_quiz1_loadmedia(Game *game, struct media_t *media, struct variables
     if (media->sfx_win == NULL) return false;
     media->sfx_lose = Mix_LoadWAV("snd/sfx_lose.wav");
     if (media->sfx_lose == NULL) return false;
+    media->sfx_bonus = Mix_LoadWAV("snd/sfx_bonus.wav");
+    if (media->sfx_bonus == NULL) return false;
     media->sfx_tally = Mix_LoadWAV("snd/sfx_tally.wav");
     if (media->sfx_tally == NULL) return false;
 
@@ -214,6 +204,7 @@ Screen screens_quiz1_close(struct media_t *media, struct objects_t *objects, str
     Mix_FreeChunk(media->sfx_auto);
     Mix_FreeChunk(media->sfx_win);
     Mix_FreeChunk(media->sfx_lose);
+    Mix_FreeChunk(media->sfx_bonus);
     Mix_FreeChunk(media->sfx_tally);
     free(media);
     free(objects);
@@ -274,9 +265,9 @@ void screens_quiz1_quiz(Game *game, struct media_t *media, struct objects_t *obj
                 Mix_PlayChannel(-1, media->sfx_auto, 0);
             }
 
-            var->correct_all &= var->correct[i];
+            var->correct_all &= var->correct[i] || (i == 12);
         }
-        if (var->correct_all) {
+        if (var->correct_all && var->correct[12]) {
             var->next = true;
         }
         if (var->rerender_points) {
@@ -318,7 +309,11 @@ void screens_quiz1_quiz(Game *game, struct media_t *media, struct objects_t *obj
 void screens_quiz1_results(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     int timer = 120;
 
-    if (var->correct_all) {
+    if (var->correct_all && var->correct[12] && !var->autocomplete) {
+        texture_load_from_text(media->tex_text, game_get_renderer(game), media->font, "EXCELENTE!", COLOR_LYELLOW);
+        Mix_PlayChannel(-1, media->sfx_bonus, 0);
+    }
+    else if (var->correct_all) {
         texture_load_from_text(media->tex_text, game_get_renderer(game), media->font, "PARABÉNS!", COLOR_LGREEN);
         Mix_PlayChannel(-1, media->sfx_win, 0);
     }
@@ -409,9 +404,7 @@ Screen screens_quiz1(Game *game) {
     if (var->ret == SCREEN_NEXT) {
         screens_quiz1_results(game, media, objects, var);
     }
-    if (var->correct_all) {
-        game_set_points(game, POINTS_1, var->current_points);
-    }
+    game_set_points(game, POINTS_1, var->current_points);
     if (var->ret == SCREEN_NEXT) var->ret = SCREEN_MENU;
 
     return screens_quiz1_close(media, objects, var);

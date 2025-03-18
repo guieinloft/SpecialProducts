@@ -1,11 +1,10 @@
 #ifndef QUESTION_H
 #define QUESTION_H
 
+#include "game.h"
 #include "textbox.h"
 #include "texture.h"
 #include "colors.h"
-
-#include <stdbool.h>
 
 #define QUESTION_POINTS 2500
 #define QUESTION_PUNISH 500

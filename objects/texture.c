@@ -1,10 +1,4 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdio.h>
-
+#include "game.h"
 #include "texture.h"
 
 struct texture_t {

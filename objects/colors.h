@@ -1,51 +1,51 @@
 #ifndef GCOLORS_H
 #define GCOLORS_H
 
-#include <SDL2/SDL.h>
+#include "game.h"
 
-extern const SDL_Color COLOR_DBLACK;
-extern const SDL_Color COLOR_DRED;
-extern const SDL_Color COLOR_DGREEN;
-extern const SDL_Color COLOR_DYELLOW;
-extern const SDL_Color COLOR_DBLUE;
-extern const SDL_Color COLOR_DPURPLE;
-extern const SDL_Color COLOR_DCYAN;
-extern const SDL_Color COLOR_DWHITE;
+#define COLOR_DBLACK (SDL_Color){46, 52, 54, 255}
+#define COLOR_DRED (SDL_Color){204, 0, 0, 255}
+#define COLOR_DGREEN (SDL_Color){78, 154, 6, 255}
+#define COLOR_DYELLOW (SDL_Color){196, 160, 0, 255}
+#define COLOR_DBLUE (SDL_Color){52, 101, 164, 255}
+#define COLOR_DPURPLE (SDL_Color){117, 80, 123, 255}
+#define COLOR_DCYAN (SDL_Color){6, 152, 154, 255}
+#define COLOR_DWHITE (SDL_Color){211, 215, 207, 255}
 
-extern const SDL_Color COLOR_LBLACK;
-extern const SDL_Color COLOR_LRED;
-extern const SDL_Color COLOR_LGREEN;
-extern const SDL_Color COLOR_LYELLOW;
-extern const SDL_Color COLOR_LBLUE;
-extern const SDL_Color COLOR_LPURPLE;
-extern const SDL_Color COLOR_LCYAN;
-extern const SDL_Color COLOR_LWHITE;
+#define COLOR_LBLACK (SDL_Color){85, 87, 83, 255}
+#define COLOR_LRED (SDL_Color){239, 41, 41, 255}
+#define COLOR_LGREEN (SDL_Color){138, 226, 52, 255}
+#define COLOR_LYELLOW (SDL_Color){252, 233, 79, 255}
+#define COLOR_LBLUE (SDL_Color){114, 159, 207, 255}
+#define COLOR_LPURPLE (SDL_Color){173, 127, 168, 255}
+#define COLOR_LCYAN (SDL_Color){52, 226, 226, 255}
+#define COLOR_LWHITE (SDL_Color){238, 238, 236, 255}
 
-extern const SDL_Color COLOR_DBLACKT;
-extern const SDL_Color COLOR_DREDT;
-extern const SDL_Color COLOR_DGREENT;
-extern const SDL_Color COLOR_DYELLOWT;
-extern const SDL_Color COLOR_DBLUET;
-extern const SDL_Color COLOR_DPURPLET;
-extern const SDL_Color COLOR_DCYANT;
-extern const SDL_Color COLOR_DWHITET;
+#define COLOR_DBLACKT (SDL_Color){0, 0, 0, 127}
+#define COLOR_DREDT (SDL_Color){204, 0, 0, 127}
+#define COLOR_DGREENT (SDL_Color){78, 154, 6, 127}
+#define COLOR_DYELLOWT (SDL_Color){196, 160, 0, 127}
+#define COLOR_DBLUET (SDL_Color){52, 101, 164, 127}
+#define COLOR_DPURPLET (SDL_Color){117, 80, 123, 127}
+#define COLOR_DCYANT (SDL_Color){6, 152, 154, 127}
+#define COLOR_DWHITET (SDL_Color){211, 215, 207, 127}
 
-extern const SDL_Color COLOR_LBLACKT;
-extern const SDL_Color COLOR_LREDT;
-extern const SDL_Color COLOR_LGREENT;
-extern const SDL_Color COLOR_LYELLOWT;
-extern const SDL_Color COLOR_LBLUET;
-extern const SDL_Color COLOR_LPURPLET;
-extern const SDL_Color COLOR_LCYANT;
-extern const SDL_Color COLOR_LWHITET;
+#define COLOR_LBLACKT (SDL_Color){85, 87, 83, 127}
+#define COLOR_LREDT (SDL_Color){239, 41, 41, 127}
+#define COLOR_LGREENT (SDL_Color){138, 226, 52, 127}
+#define COLOR_LYELLOWT (SDL_Color){252, 233, 79, 127}
+#define COLOR_LBLUET (SDL_Color){114, 159, 207, 127}
+#define COLOR_LPURPLET (SDL_Color){173, 127, 168, 127}
+#define COLOR_LCYANT (SDL_Color){52, 226, 226, 127}
+#define COLOR_LWHITET (SDL_Color){238, 238, 236, 127}
 
-extern const SDL_Color COLOR_TEXT_DEFAULT;
-extern const SDL_Color COLOR_TEXT_DEFAULT_LIGHT;
-extern const SDL_Color COLOR_TEXT_WEAK;
-extern const SDL_Color COLOR_TEXT_WEAK_LIGHT;
-extern const SDL_Color COLOR_TEXT_HIGHLIGHT;
-extern const SDL_Color COLOR_TEXT_TEXTBOX_EMPTY;
-extern const SDL_Color COLOR_TEXT_TEXTBOX_WRONG;
-extern const SDL_Color COLOR_TEXT_TEXTBOX_RIGHT;
+#define COLOR_TEXT_DEFAULT COLOR_DBLACK
+#define COLOR_TEXT_DEFAULT_LIGHT COLOR_LWHITE
+#define COLOR_TEXT_WEAK COLOR_DBLACKT
+#define COLOR_TEXT_WEAK_LIGHT COLOR_LWHITET
+#define COLOR_TEXT_HIGHLIGHT COLOR_DBLACK
+#define COLOR_TEXT_TEXTBOX_EMPTY COLOR_DBLACKT
+#define COLOR_TEXT_TEXTBOX_WRONG COLOR_DRED
+#define COLOR_TEXT_TEXTBOX_RIGHT COLOR_DGREEN
 
 #endif

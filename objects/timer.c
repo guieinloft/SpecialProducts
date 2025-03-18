@@ -1,8 +1,4 @@
-#include <SDL2/SDL.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "game.h"
 #include "timer.h"
 
 struct timer_t {

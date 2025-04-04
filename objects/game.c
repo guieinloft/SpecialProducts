@@ -6,7 +6,8 @@ struct game_t {
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *target;
-    SDL_Texture *target_prev;
+    SDL_Texture *target_mouse;
+    SDL_Texture *mouse;
 
     int w;
     int h;
@@ -25,6 +26,7 @@ struct game_t {
     bool minimized;
 
     bool options[OPTION_TOTAL];
+    bool saved;
 };
 
 Game *game_init(void) {
@@ -49,7 +51,7 @@ Game *game_init(void) {
     assert(TTF_Init() != -1);
     assert(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) >= 0);
 
-    //SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(SDL_DISABLE);
 
     SDL_GetWindowSize(self->window, &self->w, &self->h);
     printf("%d %d\n", self->w, self->h);
@@ -58,6 +60,8 @@ Game *game_init(void) {
     self->kfocus = 1;
     self->fullscreen = 0;
     self->minimized = 0;
+    
+    self->saved = 0;
 
     //OPEN SAVE FILE
     self->score_num = 0;
@@ -113,10 +117,17 @@ Game *game_init(void) {
     SDL_SetTextureBlendMode(self->target, SDL_BLENDMODE_BLEND);
     SDL_SetTextureAlphaMod(self->target, 255);
     
-    self->target_prev = SDL_CreateTexture(self->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_W, SCREEN_H);
-    assert(self->target_prev != NULL);
-    SDL_SetTextureBlendMode(self->target_prev, SDL_BLENDMODE_BLEND);
-    SDL_SetTextureAlphaMod(self->target_prev, 255);
+    self->target_mouse = SDL_CreateTexture(self->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_W, SCREEN_H);
+    assert(self->target_mouse != NULL);
+    SDL_SetTextureBlendMode(self->target_mouse, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureAlphaMod(self->target_mouse, 255);
+
+    SDL_Surface *mouse_surface = IMG_Load("img/MouseTexture.png");
+    assert(mouse_surface != NULL);
+    self->mouse = SDL_CreateTextureFromSurface(self->renderer, mouse_surface);
+    assert(self->mouse != NULL);
+    free(mouse_surface);
+    SDL_SetTextureBlendMode(self->mouse, SDL_BLENDMODE_BLEND);
     
     //SDL_SetRenderTarget(self->renderer, self->target);
     //SDL_RenderClear(self->renderer);
@@ -130,13 +141,18 @@ void game_close(Game *self) {
     SDL_DestroyRenderer(self->renderer);
     SDL_DestroyWindow(self->window);
 
+    //destroy textures
+    SDL_DestroyTexture(self->target);
+    SDL_DestroyTexture(self->target_mouse);
+    SDL_DestroyTexture(self->mouse);
+
     //quit subsystems
     Mix_Quit();
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
     
-    //SDL_ShowCursor(SDL_ENABLE);
+    SDL_ShowCursor(SDL_ENABLE);
     
     //free self struct
     free(self);
@@ -188,11 +204,22 @@ void game_render(Game *self, uint8_t alpha) {
     uint32_t ticks_start = SDL_GetTicks();
     //set target texture alpha
     SDL_SetTextureAlphaMod(self->target, alpha);
+    //set render target to mouse
+    SDL_SetRenderTarget(self->renderer, self->target_mouse);
+    //render target texture
+    SDL_RenderCopy(self->renderer, self->target, NULL, NULL);
+    //render mouse
+    int mousex, mousey;
+    SDL_GetMouseState(&mousex, &mousey);
+    mousex = (mousex - game_get_screenx(self)) / game_get_scalex(self);
+    mousey = (mousey - game_get_screeny(self)) / game_get_scaley(self);
+    SDL_Rect mouse_rect = {mousex, mousey, 12, 12};
+    SDL_RenderCopy(self->renderer, self->mouse, NULL, &mouse_rect);
     //reset render target
     SDL_SetRenderTarget(self->renderer, NULL);
     //render target texture
     SDL_Rect rect = {game_get_screenx(self), game_get_screeny(self), SCREEN_W * game_get_scalex(self), SCREEN_H * game_get_scaley(self)};
-    SDL_RenderCopy(self->renderer, self->target, NULL, &rect);
+    SDL_RenderCopy(self->renderer, self->target_mouse, NULL, &rect);
     //render to screen
     SDL_RenderPresent(self->renderer);
     //clear screen
@@ -205,9 +232,11 @@ void game_render(Game *self, uint8_t alpha) {
 }
 
 void game_clear_screen(Game *self) {
-    //save screen
-    SDL_SetRenderTarget(self->renderer, self->target_prev);
-    SDL_RenderCopy(self->renderer, self->target, NULL, NULL);
+    //set target_mouse texture as render target
+    SDL_SetRenderTarget(self->renderer, self->target_mouse);
+    //clear target texture
+    SDL_SetRenderDrawColor(self->renderer, 0, 0, 0, 255);
+    SDL_RenderClear(self->renderer);
     //set target texture as render target
     SDL_SetRenderTarget(self->renderer, self->target);
     //clear target texture
@@ -377,6 +406,7 @@ bool game_get_option(Game *self, Option option) {
 }
 
 bool game_save(Game *self, bool complete) {
+    if (self->saved && !complete) return false;
     FILE *save = fopen("./save.bin", "wb");
     if (save == NULL) return false;
     fwrite(self->options, sizeof(bool), OPTION_TOTAL, save);
@@ -394,5 +424,6 @@ bool game_save(Game *self, bool complete) {
         fprintf(log, "%s: %d\n", self->name, points);
     }
     fclose(log);
+    self->saved = true;
     return true;
 }

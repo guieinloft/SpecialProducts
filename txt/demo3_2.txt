@@ -1,8 +1,33 @@
-1 0
-TESTE 4
+3 1
+Inicialmente, temos um retângulo de base a e altura a, ou seja, um quadrado de
+área a². Porém, depois, retiramos um retângulo de área ab, passando a ter
+altura a - b, mas manteve a base a, ou seja, ficou com área a(a-b).
 
-1 1
-TESTE 5
+3 0
+Agora, vamos brincar um pouco com as áreas: na terceira etapa, percebe-se que
+adicionamos um retângulo de área ba. Perceba que a base não é mais a, e sim
+a+b!
+
+3 2
+Nota-se que um "pedacinho" de área b² ficou em cima. Então, na última etapa,
+removemos um quadrado de área b² e ficamos com a figura final, o retângulo de
+área (a+b)(a-b), o que comprova a identidade da diferença de quadrados!
+
+3 1
+Para fazer a operação inversa e prova real, tire a raiz quadrada dos dois
+termos e eleve cada um ao quadrado, verificando se o resultado ficou igual
+à expressão original.
+
+3 2
+Dica para se lembrar: diferente dos trinômios quadrados perfeitos, aqui os
+termos do meio ab e -ab se anulam, sobrando apenas a diferença entre os
+quadrados!
+
+3 0
+Então, sempre que ver uma expressão no estilo (a + b)(a - b), não perca tempo
+aplicando distributiva. Ao invés disso, aplique a diferença entre dois
+quadrados, simples e rápido!
 
 1 2
-TESTE 6
+Agora que você tem a base, é só praticar!
+

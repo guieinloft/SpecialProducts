@@ -14,6 +14,7 @@
 struct media_t {
     Texture *tex_balloon;
     Texture *tex_anim;
+    Texture *tex_button;
     Texture *tex_bg;
     Texture *tex_name;
     Texture *tex_points;
@@ -32,6 +33,8 @@ struct media_t {
 
 struct objects_t {
     Balloon *balloon;
+    Button *bt_back;
+    Button *bt_skip;
 };
 
 struct variables_t {
@@ -47,19 +50,28 @@ struct variables_t {
 };
 
 bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables_t *var) {
+    printf("ALOCANDO BALAO:\n");
     media->tex_balloon = texture_create();
     if (media->tex_balloon == NULL) return false;
+    printf("ALOCANDO ANIM:\n");
     media->tex_anim = texture_create();
     if (media->tex_anim == NULL) return false;
+    printf("ALOCANDO BG:\n");
     media->tex_bg = texture_create();
     if (media->tex_bg == NULL) return false;
+    printf("ALOCANDO NOME:\n");
     media->tex_name = texture_create();
     if (media->tex_name == NULL) return false;
+    printf("ALOCANDO PONTOS:\n");
     media->tex_points = texture_create();
     if (media->tex_points == NULL) return false;
+    printf("ALOCANDO BOTAO:\n");
+    media->tex_button = texture_create();
+    if (media->tex_button == NULL) return false;
 
     if(!texture_load_from_file(media->tex_balloon, game_get_renderer(game), "img/BalloonTexture.png")) return false;
     if(!texture_load_from_file(media->tex_anim, game_get_renderer(game), "img/BalloonAnimTexture.png")) return false;
+    if(!texture_load_from_file(media->tex_button, game_get_renderer(game), "img/ButtonTexture.png")) return false;
     
     media->font = TTF_OpenFont("fonts/PressStart2P-Regular.ttf", 8);
     if (media->font == NULL) return false;
@@ -89,6 +101,7 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
     //TEXTS 1
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 7; j++) {
+            printf("ALOCANDO TEXTO 1: %d %d:\n", i, j);
             media->tex_text1[i][j] = texture_create();
             if (media->tex_text1[i][j] == NULL) return false;
         }
@@ -136,9 +149,11 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
     
     //TEXTS 2
     for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 7; j++) {
+        for (int j = 0; j < 5; j++) {
+            printf("ALOCANDO TEXTO 2: %d %d:\n", i, j);
             media->tex_text2[i][j] = texture_create();
             if (media->tex_text2[i][j] == NULL) return false;
+            if (j == 8) printf("JÁ ERA PRA TER PARADO LMAO");
         }
     }
 
@@ -163,6 +178,7 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
     //TEXTS 3
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 8; j++) {
+            printf("ALOCANDO TEXTO 3: %d %d:\n", i, j);
             media->tex_text3[i][j] = texture_create();
             if (media->tex_text3[i][j] == NULL) return false;
         }
@@ -192,6 +208,17 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
 bool screens_demo4_loadobjects(Game *game, struct objects_t *objects, struct media_t *media, struct variables_t *var) {
     objects->balloon = balloon_create(media->tex_balloon, media->tex_anim, "txt/demo4_1.txt", true);
     if (objects->balloon == NULL) return false;
+
+    objects->bt_back = button_create(media->tex_button);
+    if (objects->bt_back == NULL) return false;
+    if (!button_change_text(objects->bt_back, game_get_renderer(game), media->font, "«", 1, COLOR_TEXT_DEFAULT, false)) return false;
+    button_change_position(objects->bt_back, 0, SCREEN_H - 24);
+
+    objects->bt_skip = button_create(media->tex_button);
+    if (objects->bt_skip == NULL) return false;
+    if (!button_change_text(objects->bt_skip, game_get_renderer(game), media->font, "»", 1, COLOR_TEXT_DEFAULT, false)) return false;
+    button_change_position(objects->bt_skip, SCREEN_W - 24, SCREEN_H - 24);
+
     return true;
 }
 
@@ -207,9 +234,12 @@ void screens_demo4_loadvariables(Game *game, struct variables_t *var) {
 
 Screen screens_demo4_close(struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     balloon_free(objects->balloon);
+    button_free(objects->bt_back);
+    button_free(objects->bt_skip);
     texture_free(media->tex_bg);
     texture_free(media->tex_balloon);
     texture_free(media->tex_anim);
+    texture_free(media->tex_button);
     texture_free(media->tex_name);
     texture_free(media->tex_points);
     for (int i = 0; i < 5; i++) {
@@ -239,18 +269,19 @@ Screen screens_demo4_close(struct media_t *media, struct objects_t *objects, str
 }
 
 void screens_demo4_intro(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 var->play_sound = true;
             }
             balloon_handle_event(objects->balloon, var->e);
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_skip, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
         if (balloon_read_more(objects->balloon)) {
             balloon_read_text(objects->balloon, game_get_renderer(game), media->font);
@@ -271,21 +302,37 @@ void screens_demo4_intro(Game *game, struct media_t *media, struct objects_t *ob
         texture_render(media->tex_points, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_points) - 8), 8, NULL);
         
         balloon_render(objects->balloon, game_get_renderer(game));
+        button_render(objects->bt_back, game_get_renderer(game));
+        button_render(objects->bt_skip, game_get_renderer(game));
 
         game_render(game, var->transition);
+        
+        if (button_ispressed(objects->bt_back)) {
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+        if (button_ispressed(objects->bt_skip)) {
+            var->ret = SCREEN_QUIZ1;
+            var->next = true;
+        }
 
-        var->transition += 16 * (var->transition < 255);
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
+        else {
+            var->transition += 16 * (var->transition < 255);
+        }
     }
 }
 
 void screens_demo4_demo1(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 Mix_PlayChannel(-1, media->sfx_click, 0);
@@ -304,6 +351,8 @@ void screens_demo4_demo1(Game *game, struct media_t *media, struct objects_t *ob
                     alpha_mod.a /= 2;
                 }
             }
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_skip, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
 
         game_clear_screen(game);
@@ -322,26 +371,43 @@ void screens_demo4_demo1(Game *game, struct media_t *media, struct objects_t *ob
                 else texture_render(media->tex_text1[k][i], game_get_renderer(game), x, 80 - 8 * (var->text_number - k), NULL);
             }
         }
+        button_render(objects->bt_back, game_get_renderer(game));
+        button_render(objects->bt_skip, game_get_renderer(game));
 
         game_render(game, var->transition);
 
         var->text_offset >>= 1;
+        
+        if (button_ispressed(objects->bt_back)) {
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+        if (button_ispressed(objects->bt_skip)) {
+            var->ret = SCREEN_QUIZ1;
+            var->next = true;
+        }
+        
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
     }
 }
 
 void screens_demo4_middle1(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 var->play_sound = true;
             }
             balloon_handle_event(objects->balloon, var->e);
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_skip, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
 
         if (balloon_read_more(objects->balloon)) {
@@ -373,19 +439,34 @@ void screens_demo4_middle1(Game *game, struct media_t *media, struct objects_t *
         }
 
         balloon_render(objects->balloon, game_get_renderer(game));
+        button_render(objects->bt_back, game_get_renderer(game));
+        button_render(objects->bt_skip, game_get_renderer(game));
 
         game_render(game, var->transition);
+        
+        if (button_ispressed(objects->bt_back)) {
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+        if (button_ispressed(objects->bt_skip)) {
+            var->ret = SCREEN_QUIZ1;
+            var->next = true;
+        }
+        
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
     }
 }
 
 void screens_demo4_demo2(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 Mix_PlayChannel(-1, media->sfx_click, 0);
@@ -404,6 +485,8 @@ void screens_demo4_demo2(Game *game, struct media_t *media, struct objects_t *ob
                     alpha_mod.a /= 2;
                 }
             }
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_skip, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
 
         game_clear_screen(game);
@@ -432,26 +515,43 @@ void screens_demo4_demo2(Game *game, struct media_t *media, struct objects_t *ob
                 else texture_render(media->tex_text2[k][i], game_get_renderer(game), x, 112 - 8 * (var->text_number - k), NULL);
             }
         }
+        button_render(objects->bt_back, game_get_renderer(game));
+        button_render(objects->bt_skip, game_get_renderer(game));
 
         game_render(game, var->transition);
 
         var->text_offset >>= 1;
+        
+        if (button_ispressed(objects->bt_back)) {
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+        if (button_ispressed(objects->bt_skip)) {
+            var->ret = SCREEN_QUIZ1;
+            var->next = true;
+        }
+        
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
     }
 }
 
 void screens_demo4_middle2(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 var->play_sound = true;
             }
             balloon_handle_event(objects->balloon, var->e);
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_skip, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
 
         if (balloon_read_more(objects->balloon)) {
@@ -493,19 +593,34 @@ void screens_demo4_middle2(Game *game, struct media_t *media, struct objects_t *
         }
 
         balloon_render(objects->balloon, game_get_renderer(game));
+        button_render(objects->bt_back, game_get_renderer(game));
+        button_render(objects->bt_skip, game_get_renderer(game));
 
         game_render(game, var->transition);
+
+        if (button_ispressed(objects->bt_back)) {
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+        if (button_ispressed(objects->bt_skip)) {
+            var->ret = SCREEN_QUIZ1;
+            var->next = true;
+        }
+        
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
     }
 }
 
 void screens_demo4_demo3(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 Mix_PlayChannel(-1, media->sfx_click, 0);
@@ -524,6 +639,8 @@ void screens_demo4_demo3(Game *game, struct media_t *media, struct objects_t *ob
                     alpha_mod.a /= 2;
                 }
             }
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_skip, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
 
         game_clear_screen(game);
@@ -562,10 +679,26 @@ void screens_demo4_demo3(Game *game, struct media_t *media, struct objects_t *ob
                 else texture_render(media->tex_text3[k][i], game_get_renderer(game), x, 136 - 8 * (var->text_number - k), NULL);
             }
         }
+        button_render(objects->bt_back, game_get_renderer(game));
+        button_render(objects->bt_skip, game_get_renderer(game));
 
         game_render(game, var->transition);
 
         var->text_offset >>= 1;
+        
+        if (button_ispressed(objects->bt_back)) {
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+        if (button_ispressed(objects->bt_skip)) {
+            var->ret = SCREEN_QUIZ1;
+            var->next = true;
+        }
+        
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
     }
 }
 
@@ -576,12 +709,13 @@ void screens_demo4_end(Game *game, struct media_t *media, struct objects_t *obje
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 var->play_sound = true;
             }
             balloon_handle_event(objects->balloon, var->e);
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
+            button_handle_event(objects->bt_skip, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
 
         if (balloon_read_more(objects->balloon)) {
@@ -638,8 +772,19 @@ void screens_demo4_end(Game *game, struct media_t *media, struct objects_t *obje
         }
 
         balloon_render(objects->balloon, game_get_renderer(game));
+        button_render(objects->bt_back, game_get_renderer(game));
+        button_render(objects->bt_skip, game_get_renderer(game));
 
         game_render(game, var->transition);
+
+        if (button_ispressed(objects->bt_back)) {
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+        if (button_ispressed(objects->bt_skip)) {
+            var->ret = SCREEN_QUIZ1;
+            var->next = true;
+        }
         
         if (var->next) {
             var->transition -= 16;

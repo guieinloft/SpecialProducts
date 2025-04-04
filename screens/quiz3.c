@@ -39,6 +39,7 @@ struct objects_t {
     Textbox *textboxes[13];
     Button *bt_enter[13];
     Button *bt_complete[13];
+    Button *bt_back;
     Timer *timer;
 };
 
@@ -146,11 +147,18 @@ bool screens_quiz3_loadobjects(Game *game, struct objects_t *objects, struct med
 
         objects->bt_enter[i] = button_create(media->tex_button);
         if (objects->bt_enter[i] == NULL) return false;
+        if (!button_change_text(objects->bt_enter[i], game_get_renderer(game), media->font, "!", 1, COLOR_TEXT_DEFAULT, false)) return false;
         button_change_position(objects->bt_enter[i], var->question_x[i]+256, var->question_y[i]+8);
         
         objects->bt_complete[i] = button_create(media->tex_button);
         if (objects->bt_complete[i] == NULL) return false;
+        if (!button_change_text(objects->bt_complete[i], game_get_renderer(game), media->font, "?", 1, COLOR_TEXT_DEFAULT, false)) return false;
         button_change_position(objects->bt_complete[i], var->question_x[i]+280, var->question_y[i]+8);
+
+        objects->bt_back = button_create(media->tex_button);
+        if (objects->bt_back == NULL) return false;
+        if (!button_change_text(objects->bt_back, game_get_renderer(game), media->font, "«", 1, COLOR_TEXT_DEFAULT, false)) return false;
+        button_change_position(objects->bt_back, 0, SCREEN_H - 24);
     }
     char str_question_bonus[32];
     sprintf(str_question_bonus, "BÔNUS: %s", question_get_q_text(objects->questions[12]));
@@ -190,6 +198,7 @@ Screen screens_quiz3_close(struct media_t *media, struct objects_t *objects, str
         button_free(objects->bt_enter[i]);
         button_free(objects->bt_complete[i]);
     }
+    button_free(objects->bt_back);
     timer_free(objects->timer);
     texture_free(media->tex_button);
     texture_free(media->tex_text);
@@ -216,19 +225,19 @@ Screen screens_quiz3_close(struct media_t *media, struct objects_t *objects, str
 
 void screens_quiz3_quiz(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     timer_start(objects->timer);
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             for (int i = 0; i < 13; i++) {
                 textbox_handle_event(objects->textboxes[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
                 button_handle_event(objects->bt_enter[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
                 button_handle_event(objects->bt_complete[i], var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
             }
+            button_handle_event(objects->bt_back, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
         }
 
         //check if questions are right
@@ -298,10 +307,23 @@ void screens_quiz3_quiz(Game *game, struct media_t *media, struct objects_t *obj
             button_render(objects->bt_enter[i], game_get_renderer(game));
             button_render(objects->bt_complete[i], game_get_renderer(game));
         }
+        button_render(objects->bt_back, game_get_renderer(game));
 
         game_render(game, var->transition);
 
-        var->transition += 16 * (var->transition < 255);
+        if (button_ispressed(objects->bt_back)) {
+            Mix_PlayChannel(-1, media->sfx_click, 0);
+            var->ret = SCREEN_MENU;
+            var->next = true;
+        }
+
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
+        else {
+            var->transition += 16 * (var->transition < 255);
+        }
     }
     
     timer_stop(objects->timer);
@@ -368,6 +390,7 @@ void screens_quiz3_results(Game *game, struct media_t *media, struct objects_t *
             button_render(objects->bt_enter[i], game_get_renderer(game));
             button_render(objects->bt_complete[i], game_get_renderer(game));
         }
+        button_render(objects->bt_back, game_get_renderer(game));
 
         game_render(game, var->transition);
         timer--;

@@ -83,9 +83,9 @@ void button_handle_event(Button *self, SDL_Event e, double scalex, double scaley
     //check if mouse is over button
     self->over = true;
 
-    if (mousex < (self->x - BUTTON_MARGIN) * scalex + screenx) self->over = false;
+    if (mousex < (self->x + BUTTON_MARGIN) * scalex + screenx) self->over = false;
     if (mousex > (self->x + (self->width + 2) * BUTTON_BLOCK_SIZE - BUTTON_MARGIN) * scalex + screenx) self->over = false;
-    if (mousey < (self->y - BUTTON_MARGIN) * scaley + screeny) self->over = false;
+    if (mousey < (self->y + BUTTON_MARGIN) * scaley + screeny) self->over = false;
     if (mousey > (self->y + BUTTON_HEIGHT - BUTTON_MARGIN) * scaley + screeny) self->over = false;
 
     if (e.type == SDL_MOUSEBUTTONDOWN) {

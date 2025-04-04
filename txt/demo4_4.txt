@@ -1,8 +1,9 @@
-1 0
-TESTE 1
+3 2
+Primeiro, substituímos a soma e o produto das raízes. Depois veio a parte
+divertida: aplicamos a distributiva! O a foi multiplicado por cada termo, e
+isso nos levou até a forma padrão da equação quadrática!
 
-1 1
-TESTE 2
+2 0
+Esse processo todo detalhadamente demonstrou que ambas as formas representam
+a mesma equação!
 
-1 2
-TESTE 3

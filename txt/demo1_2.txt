@@ -1,8 +1,38 @@
+4 1
+Na imagem, vemos um quadrado maior de lado (a+b). Esse quadrado representa a
+expressão (a+b)², ou seja, o quadrado da soma de dois termos. Você se lembra
+que a fórmula da área de um quadrado é (lado²) e a de um retângulo é (base x
+altura)? Pois é, partimos disso!
+
 1 0
-TESTE 4
+Agora, podemos observar que ele foi dividido em 4 partes:
 
-1 1
-TESTE 5
+2 1
+1. Um quadrado azul escuro no canto inferior esquerdo, de lado a, com área a²:
+Esse representa o quadrado do primeiro termo.
 
-1 2
-TESTE 6
+2 1
+2. Um quadrado verde no canto superior direito, de lado b, com a área b²:
+Esse representa o quadrado do segundo termo.
+
+3 1
+3. Dois retângulos azul-claro, com dimensões a·b, ou seja, com área ab:
+Esses dois retângulos juntos somam 2ab, que corresponde ao dobro do produto do
+primeiro pelo segundo termo.
+
+2 0
+Ao somarmos todas essas áreas, chegamos em a²+2ab+b², que é exatamente o
+trinômio quadrado perfeito! Legal, né?
+
+3 1
+Para fazer a operação inversa e prova real, tire a raiz dos dois últimos
+termos e confira se o termo do meio é igual a 2 vezes o produto da raiz dos
+dois termos da ponta.
+
+2 2
+Para memorizar, lembre-se que as duas formas têm o 2 como elemento principal,
+seja como quadrado ou seja multiplicando o termo do meio.
+
+1 0
+Agora que você já entendeu, vamos praticar!
+

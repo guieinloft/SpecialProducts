@@ -91,6 +91,7 @@ bool screens_titlescreen_loadobjects(Game *game, struct objects_t *objects, stru
 
     objects->bt_enter = button_create(media->tex_button);
     if (objects->bt_enter == NULL) return false;
+    if (!button_change_text(objects->bt_enter, game_get_renderer(game), media->font, "!", 1, COLOR_TEXT_DEFAULT, false)) return false;
     button_change_position(objects->bt_enter, 436, 264);
     return true;
 }
@@ -116,12 +117,11 @@ Screen screens_titlescreen_close(struct media_t *media, struct objects_t *object
 }
 
 void screens_titlescreen_init(Game *game, struct media_t *media, struct variables_t *var) {
-    while (!var->next) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             else if (var->e.type == SDL_MOUSEBUTTONDOWN) {
                 Mix_PlayChannel(-1, media->sfx_right, 0);
@@ -143,7 +143,12 @@ void screens_titlescreen_init(Game *game, struct media_t *media, struct variable
             var->size = M_PI/2;
         }
         var->flicker = (var->flicker + 1) % 40;
-        var->transition += 16 * (var->transition < 255);
+        if (var->next && var->ret != SCREEN_NEXT) {
+            var->transition -= 16;
+            var->transition *= (var->transition > 0);
+        }
+        else
+            var->transition += 16 * (var->transition < 255);
     }
 }
 
@@ -153,7 +158,6 @@ void screens_titlescreen_nameinput(Game *game, struct media_t *media, struct obj
             if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
             }
             textbox_handle_event(objects->textbox, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
             button_handle_event(objects->bt_enter, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));

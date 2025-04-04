@@ -1,8 +1,10 @@
-1 0
-DEMO 2
+4 2
+O quadrado da diferença de dois termos (a-b)² é igual ao quadrado do primeiro
+termo, menos duas vezes o produto do primeiro pelo segundo termo, mais o
+quadrado do segundo termo. Esse resultado também vira um trinômio quadrado
+perfeito: a²-2ab+b².
 
-1 1
-DEMO 2
+2 0
+Não entendeu? Vamos visualizar essa transformação com a ajuda de mais
+demonstrações visuais!
 
-1 2
-DEMO 2

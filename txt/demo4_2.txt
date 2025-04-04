@@ -1,8 +1,6 @@
-1 0
-TESTE 1
+4 2
+Vamos entender o que houve aqui! O que fizemos foi aplicar a distributiva para
+multiplicar os dois fatores (x-x1) e (x-x2). Ao fazer isso, temos uma equação
+quadrática com os termos x², x e o termo constante dentro dos colchetes. Como
+o coeficiente a não foi distribuído ainda, temos: a[x²-(x1+x2)x+x1·x2].
 
-1 1
-TESTE 2
-
-1 2
-TESTE 3

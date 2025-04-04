@@ -1,8 +1,29 @@
 1 0
-TESTE 1
+Ei aluno, você se lembra das expressões do segundo grau?
 
-1 1
-TESTE 2
+4 1
+A expressão quadrática tem a forma ax²+bx+c, onde a, b e c são números reais,
+e a não pode ser igual a zero. Para resolver uma equação do segundo grau,
+existem várias formas, mas a mais famosa é a fórmula de Bhaskara (que eu
+espero que você já saiba dominar).
 
-1 2
-TESTE 3
+3 2
+Porém, também destacamos uma outra forma super prática e rápida de resolver,
+chamada soma e produto, que é especialmente útil quando a = 1, funcionando bem
+em várias situações!
+
+3 1
+Agora, você certamente já ouviu falar de fatoração, certo? Fatoração é nada
+mais do que reescrever uma expressão como o produto de fatores mais simples,
+decompondo-a, o que pode tornar mais fácil entender suas soluções.
+
+5 2
+Existe uma maneira muito legal de fatorar uma expressão de grau 2, e ela fica
+com a seguinte carinha: a(x-x1)(x-x2), onde x1 e x2 são as raízes da equação,
+ou seja, os valores de x que fazem a equação ser verdadeira. Esses valores
+podem ser encontrados, principalmente, usando a fórmula de Bhaskara ou a
+técnica de soma e produto!
+
+1 0
+Agora, vamos ver como a forma fatorada é equivalente à forma tradicional!
+

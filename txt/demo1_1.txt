@@ -1,8 +1,10 @@
-1 0
-TESTE 1
+4 2
+O quadrado da soma de dois termos (a+b)² é igual ao quadrado do primeiro
+termo, mais duas vezes o produto do primeiro pelo segundo termo, mais o
+quadrado do segundo termo. Esse resultado se forma no que chamamos de trinômio
+quadrado perfeito (a² + 2ab + b²)!
 
-1 1
-TESTE 2
+2 0
+Ainda em dúvida? Vamos ver como o quadrado da soma se transforma no trinômio
+quadrado perfeito com uma demonstração visual!
 
-1 2
-TESTE 3

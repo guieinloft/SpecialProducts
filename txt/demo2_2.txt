@@ -1,8 +1,34 @@
+4 1
+Inicialmente, tivemos um quadrado azul escuro de lado a, que representa a área
+total a². No entanto, como se trata do quadrado da diferença entre dois termos
+(a-b), foram removidas certas partes para representar a subtração
+corretamente.
+
+2 1
+Tiramos um retângulo de dimensões a·b, com área ab. Depois, retiramos mais um
+retângulo idêntico de área ba, o que são 2ab removidos.
+
+3 2
+Mas calma, removemos demais…  um quadrado de lado b foi removido no canto.
+Como ele foi removido uma vez a mais, precisamos adicioná-lo de volta. Sua
+área é b².
+
+3 0
+E pronto! Dessa maneira, confirmamos que a decomposição geométrica do
+quadrado original gera exatamente o trinômio quadrado perfeito:
+a²-2ab+b².
+
+3 1
+Para fazer a operação inversa e prova real, tire a raiz dos dois últimos
+termos e confira se o termo do meio é igual a 2 vezes o produto da raiz dos
+dois termos da ponta.
+
+4 2
+Para memorizar, lembre-se que as duas formas têm o 2 como elemento principal,
+seja como quadrado ou seja multiplicando o termo do meio. Assim como no
+quadrado da soma, o termo do meio sempre envolve o dobro do produto dos
+termos, mas agora com sinal negativo!
+
 1 0
-DEMO TESTE 1
+Entendeu tudo? Então vamos testar!
 
-1 1
-DEMO TESTE 2
-
-1 2
-DEMO TESTE 3

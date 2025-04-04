@@ -1,8 +1,9 @@
-1 0
-TESTE 1
+2 1
+Agora aqui, o coeficiente a é distribuído para cada termo dentro dos
+parênteses.
 
-1 1
-TESTE 2
+3 0
+Agora vem a parte divertida: você se lembra do método da soma e produto?
+Esse método diz que a soma das raízes é -b/a e o produto das raízes é c/a.
+Portanto, vamos substituir x1+x2 por -b/a e x1·x2 por c/a.
 
-1 2
-TESTE 3

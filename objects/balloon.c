@@ -111,7 +111,7 @@ bool balloon_read_text(Balloon *self, SDL_Renderer *renderer, TTF_Font *font) {
     } 
 
     self->num_lines = self->num_lines * (self->num_lines <= MAX_LINES) + MAX_LINES * (self->num_lines > MAX_LINES);
-    self->btarget_y = SCREEN_H - (self->num_lines * 8 + 16) * (self->num_lines > 0);
+    self->btarget_y = SCREEN_H - (self->num_lines * 8 + 32) * (self->num_lines > 0);
     self->atarget_y = SCREEN_H - texture_geth(self->tex_anim) * (self->num_lines > 0);
 
     self->read_more = false;

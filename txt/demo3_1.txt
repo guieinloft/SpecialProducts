@@ -1,8 +1,8 @@
+3 2
+O produto da soma pela diferença de dois termos (a+b)(a-b) é igual ao quadrado
+do primeiro termo menos o quadrado do segundo termo. Esse resultado é chamado
+de diferença de quadrados: a² - b².
+
 1 0
-TESTE 1
+Vamos ver como isso se aplica com ajuda de mais uma demonstração visual!
 
-1 1
-TESTE 2
-
-1 2
-TESTE 3

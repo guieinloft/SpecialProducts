@@ -267,12 +267,11 @@ bool screens_menu_options_close(Game *game, struct media_t *media, struct object
 
 bool screens_menu_options(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     if (!screens_menu_options_init(game, media, objects, var)) return false;
-    while (!var->next) {
+    while (!var->next || (var->transition == 0 && var->ret != SCREEN_MENU)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
                 game_save(game, true);
             }
             button_handle_event(objects->button1, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
@@ -363,12 +362,11 @@ bool screens_menu_credits(Game *game, struct media_t *media, struct objects_t *o
     if (!button_change_text(objects->bt_credits, game_get_renderer(game), media->font, "VOLTAR", 24, COLOR_TEXT_DEFAULT, true)) return false;
     if (!texture_load_from_text(media->tex_screen, game_get_renderer(game), media->font, "CRÉDITOS", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     var->next = false;
-    while (!var->next) {
+    while (!var->next || (var->transition == 0 && var->ret != SCREEN_MENU)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
                 game_save(game, true);
             }
             button_handle_event(objects->bt_credits, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
@@ -404,12 +402,11 @@ bool screens_menu_ranking(Game *game, struct media_t *media, struct objects_t *o
     if (!button_change_text(objects->bt_ranking, game_get_renderer(game), media->font, "VOLTAR", 24, COLOR_TEXT_DEFAULT, true)) return false;
     if (!texture_load_from_text(media->tex_screen, game_get_renderer(game), media->font, "PLACAR", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     var->next = false;
-    while (!var->next) {
+    while (!var->next || (var->transition == 0 && var->ret != SCREEN_MENU)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
                 game_save(game, true);
             }
             button_handle_event(objects->bt_ranking, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
@@ -446,7 +443,6 @@ void screens_menu_menu(Game *game, struct media_t *media, struct objects_t *obje
             if (game_handle_event(game, var->e)) {
                 var->next = true;
                 var->ret = SCREEN_QUIT;
-                var->transition = 0;
                 game_save(game, true);
             }
             button_handle_event(objects->button1, var->e, game_get_scalex(game), game_get_scaley(game), game_get_screenx(game), game_get_screeny(game));
@@ -512,6 +508,7 @@ void screens_menu_menu(Game *game, struct media_t *media, struct objects_t *obje
             }
         }
         if (button_ispressed(objects->bt_ranking)) {
+            Mix_PlayChannel(-1, media->sfx_click, 0);
             if (!screens_menu_ranking(game, media, objects, var)) {
                 var->next = true;
                 var->ret = SCREEN_ERROR;

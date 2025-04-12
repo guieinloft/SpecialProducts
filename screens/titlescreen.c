@@ -188,13 +188,18 @@ void screens_titlescreen_nameinput(Game *game, struct media_t *media, struct obj
         texture_render(media->tex_bg, game_get_renderer(game), 0, 0, NULL);
         texture_render(media->tex_prompt2, game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_prompt2)) / 2, 256, NULL);
         texture_render(media->tex_copyright, game_get_renderer(game), 8, SCREEN_H - 16, NULL);
-        texture_render(media->tex_title, game_get_renderer(game), SCREEN_W / 2 - 128, 0, NULL);
         textbox_render(objects->textbox, game_get_renderer(game), media->font);
         button_render(objects->bt_enter, game_get_renderer(game));
+        //texture_render_scaled(media->tex_title, game_get_renderer(game), SCREEN_W / 2 - 128 * var->size, 128 - 128 * var->size, NULL, var->size, var->size, 0.0, NULL);
+        texture_render_scaled(media->tex_title, game_get_renderer(game), SCREEN_W / 2 - 128 / sin(var->size), 128 - 128 / sin(var->size), NULL, 1 / sin(var->size), 1 / sin(var->size), 0.0, NULL);
         game_render(game, var->transition);
         if (var->next) {
             var->transition -= 16;
             var->transition *= (var->transition > 0);
+            var->size += 0.1;
+            if (var->size > 3.1) {
+                var->size = M_PI;
+            }
         }
     }
 }

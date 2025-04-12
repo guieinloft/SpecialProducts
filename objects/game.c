@@ -213,7 +213,7 @@ void game_render(Game *self, uint8_t alpha) {
     SDL_GetMouseState(&mousex, &mousey);
     mousex = (mousex - game_get_screenx(self)) / game_get_scalex(self);
     mousey = (mousey - game_get_screeny(self)) / game_get_scaley(self);
-    SDL_Rect mouse_rect = {mousex, mousey, 12, 12};
+    SDL_Rect mouse_rect = {mousex, mousey, 16, 16};
     SDL_RenderCopy(self->renderer, self->mouse, NULL, &mouse_rect);
     //reset render target
     SDL_SetRenderTarget(self->renderer, NULL);

@@ -225,7 +225,7 @@ Screen screens_quiz4_close(struct media_t *media, struct objects_t *objects, str
 
 void screens_quiz4_quiz(Game *game, struct media_t *media, struct objects_t *objects, struct variables_t *var) {
     timer_start(objects->timer);
-    while (!var->next || (var->transition > 0 && var->ret != SCREEN_MENU)) {
+    while (!var->next || (var->transition > 0 && var->ret != SCREEN_NEXT)) {
         while (SDL_PollEvent(&var->e) != 0) {
             if (game_handle_event(game, var->e)) {
                 game_save(game, false);

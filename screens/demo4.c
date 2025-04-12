@@ -50,22 +50,16 @@ struct variables_t {
 };
 
 bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables_t *var) {
-    printf("ALOCANDO BALAO:\n");
     media->tex_balloon = texture_create();
     if (media->tex_balloon == NULL) return false;
-    printf("ALOCANDO ANIM:\n");
     media->tex_anim = texture_create();
     if (media->tex_anim == NULL) return false;
-    printf("ALOCANDO BG:\n");
     media->tex_bg = texture_create();
     if (media->tex_bg == NULL) return false;
-    printf("ALOCANDO NOME:\n");
     media->tex_name = texture_create();
     if (media->tex_name == NULL) return false;
-    printf("ALOCANDO PONTOS:\n");
     media->tex_points = texture_create();
     if (media->tex_points == NULL) return false;
-    printf("ALOCANDO BOTAO:\n");
     media->tex_button = texture_create();
     if (media->tex_button == NULL) return false;
 
@@ -101,7 +95,6 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
     //TEXTS 1
     for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 7; j++) {
-            printf("ALOCANDO TEXTO 1: %d %d:\n", i, j);
             media->tex_text1[i][j] = texture_create();
             if (media->tex_text1[i][j] == NULL) return false;
         }
@@ -150,10 +143,8 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
     //TEXTS 2
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 5; j++) {
-            printf("ALOCANDO TEXTO 2: %d %d:\n", i, j);
             media->tex_text2[i][j] = texture_create();
             if (media->tex_text2[i][j] == NULL) return false;
-            if (j == 8) printf("JÁ ERA PRA TER PARADO LMAO");
         }
     }
 
@@ -178,7 +169,6 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
     //TEXTS 3
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 8; j++) {
-            printf("ALOCANDO TEXTO 3: %d %d:\n", i, j);
             media->tex_text3[i][j] = texture_create();
             if (media->tex_text3[i][j] == NULL) return false;
         }

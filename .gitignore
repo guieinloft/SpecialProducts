@@ -46,4 +46,4 @@ save.bin
 score_log.txt
 
 # sdl files
-x86_64-w64-mingw32/
+x86_64-w64-mingw32/*

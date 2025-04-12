@@ -18,6 +18,7 @@ struct media_t {
     Texture *tex_points;
     Texture *tex_bilinear;
     Texture *tex_credits[NUM_CREDITS][2];
+    Texture *tex_bugs[2];
     Texture *tex_ranking[6];
     SDL_Rect clip_bg;
 
@@ -61,6 +62,10 @@ bool screens_menu_loadmedia(Game *game, struct media_t *media, struct variables_
     if (media->tex_points == NULL) return false;
     media->tex_bilinear = texture_create();
     if (media->tex_bilinear == NULL) return false;
+    media->tex_bugs[0] = texture_create();
+    if (media->tex_bugs[0] == NULL) return false;
+    media->tex_bugs[1] = texture_create();
+    if (media->tex_bugs[1] == NULL) return false;
     for (int i = 0; i < NUM_CREDITS; i++) {
         for (int j = 0; j < 2; j++) {
             media->tex_credits[i][j] = texture_create();
@@ -106,6 +111,8 @@ bool screens_menu_loadmedia(Game *game, struct media_t *media, struct variables_
     if (!texture_load_from_text(media->tex_credits[1][1], game_get_renderer(game), media->font, "Programação, músicas, artes", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if (!texture_load_from_text(media->tex_credits[2][0], game_get_renderer(game), media->font, "CAMILLA LEAL SEVERO", COLOR_TEXT_DEFAULT_LIGHT)) return false;
     if (!texture_load_from_text(media->tex_credits[2][1], game_get_renderer(game), media->font, "Textos, artes", COLOR_TEXT_DEFAULT_LIGHT)) return false;
+    if (!texture_load_from_text(media->tex_bugs[0], game_get_renderer(game), media->font, "Se encontrar algum bug, mande um e-mail para guieinloft@proton.me", COLOR_TEXT_WEAK_LIGHT)) return false;
+    if (!texture_load_from_text(media->tex_bugs[1], game_get_renderer(game), media->font, "ou crie um issue em github.com/guieinloft/SpecialProducts", COLOR_TEXT_WEAK_LIGHT)) return false;
 
     //RANKING
     char str_ranking[TEXTBOX_TEXT_SIZE + 13];
@@ -189,6 +196,8 @@ Screen screens_menu_close(struct media_t *media, struct objects_t *objects, stru
     texture_free(media->tex_name);
     texture_free(media->tex_points);
     texture_free(media->tex_bilinear);
+    texture_free(media->tex_bugs[0]);
+    texture_free(media->tex_bugs[1]);
     for (int i = 0; i < NUM_CREDITS; i++) {
         for (int j = 0; j < 2; j++) {
             texture_free(media->tex_credits[i][j]);
@@ -383,6 +392,8 @@ bool screens_menu_credits(Game *game, struct media_t *media, struct objects_t *o
                 texture_render(media->tex_credits[i][j], game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_credits[i][j])) / 2, 128 + 48 * i + 16 * j, NULL);
             }
         }
+        texture_render(media->tex_bugs[0], game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_bugs[0])) / 2, SCREEN_H - 56, NULL);
+        texture_render(media->tex_bugs[1], game_get_renderer(game), (SCREEN_W - texture_getw(media->tex_bugs[1])) / 2, SCREEN_H - 48, NULL);
         button_render(objects->bt_credits, game_get_renderer(game));
         
         game_render(game, var->transition);

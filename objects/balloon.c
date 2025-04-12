@@ -101,7 +101,7 @@ bool balloon_read_text(Balloon *self, SDL_Renderer *renderer, TTF_Font *font) {
     }
     self->num_anim %= 3;
     for (int i = 0; i < self->num_lines; i++) {
-        getline(&self->line_buf, &self->buf_size, self->file);
+        fgets(self->line_buf, self->buf_size, self->file);
         self->line_buf[strcspn(self->line_buf, "\r\n")] = '\0';
         if (i < MAX_LINES) {
             memcpy(self->lines[i], self->line_buf, BALLOON_TEXT_SIZE);

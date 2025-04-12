@@ -15,7 +15,7 @@ struct game_t {
     int points[4];
     char name[31];
     int position;
-    
+
     int points_rank[99];
     char name_rank[99][31];
     int score_num;
@@ -60,7 +60,7 @@ Game *game_init(void) {
     self->kfocus = 1;
     self->fullscreen = 0;
     self->minimized = 0;
-    
+
     self->saved = 0;
 
     //OPEN SAVE FILE
@@ -116,7 +116,7 @@ Game *game_init(void) {
     assert(self->target != NULL);
     SDL_SetTextureBlendMode(self->target, SDL_BLENDMODE_BLEND);
     SDL_SetTextureAlphaMod(self->target, 255);
-    
+
     self->target_mouse = SDL_CreateTexture(self->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_W, SCREEN_H);
     assert(self->target_mouse != NULL);
     SDL_SetTextureBlendMode(self->target_mouse, SDL_BLENDMODE_BLEND);
@@ -126,9 +126,9 @@ Game *game_init(void) {
     assert(mouse_surface != NULL);
     self->mouse = SDL_CreateTextureFromSurface(self->renderer, mouse_surface);
     assert(self->mouse != NULL);
-    free(mouse_surface);
+    //free(mouse_surface);
     SDL_SetTextureBlendMode(self->mouse, SDL_BLENDMODE_BLEND);
-    
+
     //SDL_SetRenderTarget(self->renderer, self->target);
     //SDL_RenderClear(self->renderer);
     SDL_SetRenderDrawBlendMode(self->renderer, SDL_BLENDMODE_BLEND);
@@ -151,9 +151,9 @@ void game_close(Game *self) {
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
-    
+
     SDL_ShowCursor(SDL_ENABLE);
-    
+
     //free self struct
     free(self);
 }
@@ -180,7 +180,7 @@ double game_get_scalex(Game *self) {
 double game_get_scaley(Game *self) {
     double scalex = (double)self->w / SCREEN_W;
     double scaley = (double)self->h / SCREEN_H;
-    
+
     if (self->options[OPTION_INTEGER_SCALING]) {
         scalex = (double)(int)scalex;
         scaley = (double)(int)scaley;
@@ -289,8 +289,6 @@ void game_calc_position(Game *self) {
         self->position = self->score_num - 1;
     }
     else self->position--;
-    printf("%d %d %s\n", self->position, self->points_rank[self->position], self->name_rank[self->position]);
-    printf("%d %s\n", points, self->name);
     self->points_rank[self->position] = 0;
     strcpy(self->name_rank[self->position], "");
     self->position--;
@@ -316,7 +314,6 @@ bool game_handle_event(Game *self, SDL_Event e) {
             case SDL_WINDOWEVENT_SIZE_CHANGED:
             self->w = e.window.data1;
             self->h = e.window.data2;
-            printf("%d %d\n", self->w, self->h);
             break;
 
             case SDL_WINDOWEVENT_ENTER:
@@ -362,7 +359,7 @@ bool game_handle_event(Game *self, SDL_Event e) {
     }
     else if ((e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) || e.type == SDL_QUIT)
         return true;
-    
+
     return false;
 }
 

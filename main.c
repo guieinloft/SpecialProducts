@@ -34,4 +34,5 @@ int main(int argc, char **argv) {
 
     //close everything
     game_close(game);
+    return 0;
 }

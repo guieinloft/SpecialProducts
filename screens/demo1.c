@@ -83,7 +83,7 @@ bool screens_demo1_loadmedia(Game *game, struct media_t *media, struct variables
 
     texture_set_color_mod(media->tex_bg, COLOR_LBLUE, SDL_BLENDMODE_BLEND);
 
-    media->music = Mix_LoadMUS("snd/demoproducts.wav");
+    media->music = Mix_LoadMUS("snd/demoproducts.ogg");
     if (media->music == NULL) return false;
     media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
     if (media->sfx_click == NULL) return false;

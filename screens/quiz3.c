@@ -106,7 +106,7 @@ bool screens_quiz3_loadmedia(Game *game, struct media_t *media, struct variables
         if (media->tex_questions[i] == NULL) return false;
     }
     
-    media->music = Mix_LoadMUS("snd/quizproducts.wav");
+    media->music = Mix_LoadMUS("snd/quizproducts.ogg");
     if (media->music == NULL) return false;
     media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
     if (media->sfx_click == NULL) return false;

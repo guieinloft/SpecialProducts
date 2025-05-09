@@ -57,7 +57,7 @@ bool screens_titlescreen_loadmedia(Game *game, struct media_t *media) {
     
     if(!texture_load_from_text(media->tex_prompt, game_get_renderer(game), media->font, "PRESSIONE O BOTÃO ESQUERDO DO MOUSE", COLOR_TEXT_DEFAULT)) return false;
     if(!texture_load_from_text(media->tex_prompt2, game_get_renderer(game), media->font, "DIGITE O SEU NOME:", COLOR_TEXT_DEFAULT)) return false;
-    if(!texture_load_from_text(media->tex_copyright, game_get_renderer(game), media->font, "© 2025, Guilherme Einloft", COLOR_TEXT_DEFAULT)) return false;
+    if(!texture_load_from_text(media->tex_copyright, game_get_renderer(game), media->font, "Versão 1.0.0", COLOR_TEXT_DEFAULT)) return false;
 
     if(!texture_load_from_file(media->tex_bg, game_get_renderer(game), "img/BgTexture.png")) return false;
     
@@ -65,7 +65,7 @@ bool screens_titlescreen_loadmedia(Game *game, struct media_t *media) {
     
     if(!texture_load_from_file(media->tex_button, game_get_renderer(game), "img/ButtonTexture.png")) return false;
 
-    media->music = Mix_LoadMUS("snd/titleproducts.wav");
+    media->music = Mix_LoadMUS("snd/titleproducts.ogg");
     if (media->music == NULL) return false;
     media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
     if (media->sfx_click == NULL) return false;

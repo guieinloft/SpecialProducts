@@ -79,7 +79,7 @@ bool screens_demo4_loadmedia(Game *game, struct media_t *media, struct variables
 
     texture_set_color_mod(media->tex_bg, COLOR_LRED, SDL_BLENDMODE_BLEND);
 
-    media->music = Mix_LoadMUS("snd/demoproducts.wav");
+    media->music = Mix_LoadMUS("snd/demoproducts.ogg");
     if (media->music == NULL) return false;
     media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
     if (media->sfx_click == NULL) return false;
@@ -302,7 +302,7 @@ void screens_demo4_intro(Game *game, struct media_t *media, struct objects_t *ob
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ4;
             var->next = true;
         }
 
@@ -373,7 +373,7 @@ void screens_demo4_demo1(Game *game, struct media_t *media, struct objects_t *ob
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ4;
             var->next = true;
         }
         
@@ -439,7 +439,7 @@ void screens_demo4_middle1(Game *game, struct media_t *media, struct objects_t *
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ4;
             var->next = true;
         }
         
@@ -517,7 +517,7 @@ void screens_demo4_demo2(Game *game, struct media_t *media, struct objects_t *ob
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ4;
             var->next = true;
         }
         
@@ -593,7 +593,7 @@ void screens_demo4_middle2(Game *game, struct media_t *media, struct objects_t *
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ4;
             var->next = true;
         }
         
@@ -681,7 +681,7 @@ void screens_demo4_demo3(Game *game, struct media_t *media, struct objects_t *ob
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ4;
             var->next = true;
         }
         
@@ -772,7 +772,7 @@ void screens_demo4_end(Game *game, struct media_t *media, struct objects_t *obje
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ4;
             var->next = true;
         }
         

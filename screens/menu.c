@@ -92,7 +92,7 @@ bool screens_menu_loadmedia(Game *game, struct media_t *media, struct variables_
     media->clip_bg.w = SCREEN_W;
     media->clip_bg.h = SCREEN_H;
     
-    media->music = Mix_LoadMUS("snd/menuproducts.wav");
+    media->music = Mix_LoadMUS("snd/menuproducts.ogg");
     if (media->music == NULL) return false;
     media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
     if (media->sfx_click == NULL) return false;

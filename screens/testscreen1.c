@@ -46,7 +46,7 @@ bool screens_testscreen1_loadmedia(Game *game, struct media_t *media) {
     media->clip_bg.w = SCREEN_W;
     media->clip_bg.h = SCREEN_H;
 
-    media->music = Mix_LoadMUS("snd/dong.wav");
+    media->music = Mix_LoadMUS("snd/dong.ogg");
     if (media->music == NULL) return false;
 
     return true;

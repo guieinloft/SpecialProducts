@@ -83,7 +83,7 @@ bool screens_demo3_loadmedia(Game *game, struct media_t *media, struct variables
 
     texture_set_color_mod(media->tex_bg, COLOR_LYELLOW, SDL_BLENDMODE_BLEND);
 
-    media->music = Mix_LoadMUS("snd/demoproducts.wav");
+    media->music = Mix_LoadMUS("snd/demoproducts.ogg");
     if (media->music == NULL) return false;
     media->sfx_click = Mix_LoadWAV("snd/sfx_click.wav");
     if (media->sfx_click == NULL) return false;
@@ -325,7 +325,7 @@ void screens_demo3_intro(Game *game, struct media_t *media, struct objects_t *ob
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ3;
             var->next = true;
         }
 
@@ -405,7 +405,7 @@ void screens_demo3_demo(Game *game, struct media_t *media, struct objects_t *obj
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ3;
             var->next = true;
         }
 
@@ -484,7 +484,7 @@ void screens_demo3_end(Game *game, struct media_t *media, struct objects_t *obje
             var->next = true;
         }
         if (button_ispressed(objects->bt_skip)) {
-            var->ret = SCREEN_QUIZ1;
+            var->ret = SCREEN_QUIZ3;
             var->next = true;
         }
         

@@ -38,7 +38,7 @@ Game *game_init(void) {
     assert(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) >= 0);
 
     //create SDL self
-    self->window = SDL_CreateWindow("JOOJ", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_W, SCREEN_H, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    self->window = SDL_CreateWindow("Special Products", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_W, SCREEN_H, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     assert(self->window != NULL);
 
     //create renderer
